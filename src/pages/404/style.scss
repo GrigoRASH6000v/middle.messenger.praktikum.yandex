@@ -1,0 +1,23 @@
+.page-warning{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .page-warning__warning{
+        display: grid;
+        justify-items: center;
+        row-gap: .9rem;
+    }
+    .warning__title{
+        font-size: 3.6rem;
+        font-family: 'Roboto-Bold';
+    }
+    .warning__text{
+        font-size: 1.8rem;
+        margin-bottom: 4rem;
+    }
+    .warning__link{
+        font-size: 1.6rem;
+        color: $brand-clr-1;
+    }
+}

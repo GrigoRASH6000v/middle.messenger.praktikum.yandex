@@ -1,0 +1,83 @@
+.personal-account{
+    background-color: $brand-clr-3;
+    display: flex;
+    height: 100%;
+    padding: 6rem;
+    justify-content: center;
+    .personal-account__form{
+        background-color: $white-clr;
+        max-width: 100rem;
+        width: 100%;
+        border-radius: 1rem;
+        display: grid;
+        padding: 5rem;
+        grid-auto-rows: max-content;
+        row-gap: 2.8rem;
+        align-items: flex-start;
+    }
+    .item__avatar-wrp{
+        width: 20rem;
+        height: 20rem;
+        justify-self: center;
+    }
+    .form__name{
+        text-align: center;
+        font-size: 1.8rem;
+    }
+    .form__inputs{
+        max-width: 55rem;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+       row-gap: 1.5rem;
+       justify-self: center;
+       margin-bottom: 4rem;
+    }
+    .inputs__input-block{
+        width: 100%;
+        border-bottom: 1px solid $grey-clr;
+        padding-bottom: 1rem;
+        display: flex;
+        justify-content: space-between;
+        input{
+            text-align: right;
+            border: none;
+            outline: none;
+            font-size: 1.6rem;
+            color: $brand-clr-2;
+        }
+    }
+    .input-block__label{
+        font-size: 1.6rem;
+    }
+    .form__bottom-block{
+        display: grid;
+        justify-self: center;
+        max-width: 55rem;
+        width: 100%;
+        row-gap: 1.5rem;
+        button{
+            background-color: transparent;
+            color: $brand-clr-1;
+        }
+        .inputs__input-block{
+
+        }
+    }
+    .form__logout-btn{
+        width: 100%;
+        justify-self: center;
+        max-width: 55rem;
+        font-size: 1.6rem;
+        display: flex;
+        justify-content: flex-start;
+        a{
+            color: #FF0101;
+        }
+    } 
+    .form__save-btn{
+        justify-self: center;
+        max-width: 30rem;
+        width: 100%;
+    }   
+}
