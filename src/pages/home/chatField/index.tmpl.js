@@ -1,9 +1,7 @@
-import avatar1 from "../../../assets/img/users__avatars/avatar.png"
-import avatar3 from "../../../assets/img/users__avatars/avatar-3.png"
+import avatar1 from "../../../assets/img/users__avatars/avatar.png";
+import avatar3 from "../../../assets/img/users__avatars/avatar-3.png";
 
-
-export default
-`<div class="chat-field">
+export default `<div class="chat-field">
     <div class="chat-field__header">
         <div class="header__chat-info">
             <div class="item__avatar-wrp">
@@ -104,4 +102,4 @@ export default
             </div>
         </div>
     </div>
-</div>`
+</div>`;

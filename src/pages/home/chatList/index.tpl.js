@@ -1,9 +1,7 @@
-import avatar1 from "../../../assets/img/users__avatars/avatar.png"
-import avatar2 from "../../../assets/img/users__avatars/avatar-2.png"
+import avatar1 from "../../../assets/img/users__avatars/avatar.png";
+import avatar2 from "../../../assets/img/users__avatars/avatar-2.png";
 
-
-export default
-`<div class="chat-list">
+export default `<div class="chat-list">
     <h3 class="chat-list__title">Чаты</h3>
     <div class="input-wrp">
         <svg class="input__icon" width="21" height="22" viewBox="0 0 21 22" xmlns="http://www.w3.org/2000/svg">
@@ -82,4 +80,4 @@ export default
             <span class="item__chat-text">Привет, ребята, зацените новую фучу!</span>
         </div>
     </div>
-</div>`
+</div>`;

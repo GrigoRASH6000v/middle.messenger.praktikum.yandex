@@ -1,5 +1,5 @@
-import personalAccount from "./index.tmpl.js"
+import personalAccount from "./index.tmpl.js";
 
 export default {
-    template : personalAccount
-}
+  template: personalAccount,
+};

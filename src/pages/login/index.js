@@ -1,7 +1,6 @@
-import login from "./index.tmpl.js"
+import login from "./index.tmpl.js";
 export default {
-    template: login,
-    data: {},
-    methods: {},
-}
-
+  template: login,
+  data: {},
+  methods: {},
+};

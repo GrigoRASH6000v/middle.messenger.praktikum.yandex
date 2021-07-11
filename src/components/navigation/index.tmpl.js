@@ -1,5 +1,4 @@
-export default
-`<nav class="navigation">
+export default `<nav class="navigation">
     <div class="navigation__item navigation__item--logo">
         <svg class="item__logo" width="44" height="50" viewBox="0 0 44 50" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -28,4 +27,4 @@ export default
             </svg>
         </a>
     </div>
-</nav>`
+</nav>`;

@@ -1,5 +1,5 @@
-import page404 from "./index.tmpl.js"
+import page404 from "./index.tmpl.js";
 
 export default {
-    template: page404
-}
+  template: page404,
+};

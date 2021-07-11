@@ -1,15 +1,14 @@
 export default function get(obj, path, defaultValue) {
-    const keys = path.split('.');
+  const keys = path.split(".");
 
-    let result = obj;
-    for (let key of keys) {
-        result = result[key];
+  let result = obj;
+  for (let key of keys) {
+    result = result[key];
 
-        if (result === undefined) {
-            return defaultValue;        
-        }
+    if (result === undefined) {
+      return defaultValue;
     }
+  }
 
-    return result ?? defaultValue; 
-} 
-
+  return result ?? defaultValue;
+}

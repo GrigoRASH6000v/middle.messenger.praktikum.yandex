@@ -1,7 +1,6 @@
-import avatar3 from "../../assets/img/users__avatars/avatar-3.png"
+import avatar3 from "../../assets/img/users__avatars/avatar-3.png";
 
-export default
-`<div class="personal-account">
+export default `<div class="personal-account">
     <div class="personal-account__form">
         <div class="item__avatar-wrp">
             <img src="${avatar3}" alt="avatar">
@@ -46,4 +45,4 @@ export default
             </div>
         </div>
     </div>
-</div>`
+</div>`;

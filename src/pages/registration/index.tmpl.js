@@ -1,5 +1,4 @@
-export default
-`<div class="registration">
+export default `<div class="registration">
     <div class="form registration__form">
         <h3 class="form__title">Регистрация</h3>
         <label for="form_input-login" class="label">
@@ -35,4 +34,4 @@ export default
             <a class="link-btn--text" href="/">Войти</a>
         </div>
     </div>
-</div>`
+</div>`;

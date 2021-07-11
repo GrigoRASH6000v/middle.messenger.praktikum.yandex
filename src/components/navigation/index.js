@@ -1,7 +1,7 @@
-import navigation from "./index.tmpl.js"
+import navigation from "./index.tmpl.js";
 
 export default {
-    template: navigation,
-    data: {},
-    methods: {},
-}
+  template: navigation,
+  data: {},
+  methods: {},
+};

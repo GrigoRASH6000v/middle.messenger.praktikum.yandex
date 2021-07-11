@@ -1,5 +1,4 @@
-export default
-    `<div class="home">
+export default `<div class="home">
        <chatList/>
        <chatField/>
-    </div>`
+    </div>`;
