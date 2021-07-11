@@ -1,9 +1,13 @@
+import avatar1 from "../../../assets/img/users__avatars/avatar.png"
+import avatar3 from "../../../assets/img/users__avatars/avatar-3.png"
+
+
 export default
 `<div class="chat-field">
     <div class="chat-field__header">
         <div class="header__chat-info">
             <div class="item__avatar-wrp">
-                <div class="item__avatar"></div>
+                <img src="${avatar1}" alt="avatar">
             </div>
             <span class="chat-info__name">Александра Макарова</span>
             <span class="chat-info__status">online</span>
@@ -14,7 +18,7 @@ export default
     <div class="chat-field__body">
         <div class="body__item body__item--incoming">
             <div class="item__avatar-wrp item__avatar-wrp--body">
-                <div class="item__avatar"></div>
+                <img src="${avatar1}" alt="avatar">
             </div>
             <div class="item__text">
                 <span class="text__name">Александра Макарова</span>
@@ -29,7 +33,7 @@ export default
         </div>
         <div class="body__item body__item--outgoing">
             <div class="item__avatar-wrp item__avatar-wrp--body">
-                <div class="item__avatar"></div>
+                <img src="${avatar3}" alt="avatar">
             </div>
             <div class="item__text">
                 <p class="text__cintent">
@@ -43,7 +47,7 @@ export default
         </div>
         <div class="body__item body__item--incoming">
             <div class="item__avatar-wrp item__avatar-wrp--body">
-                <div class="item__avatar"></div>
+                <img src="${avatar1}" alt="avatar">
             </div>
             <div class="item__text">
                 <span class="text__name">Александра Макарова</span>
@@ -58,7 +62,7 @@ export default
         </div>
         <div class="body__item body__item--outgoing">
             <div class="item__avatar-wrp item__avatar-wrp--body">
-                <div class="item__avatar"></div>
+                <img src="${avatar3}" alt="avatar">
             </div>
             <div class="item__text">
                 <p class="text__cintent">
@@ -72,7 +76,7 @@ export default
         </div>
         <div class="body__item body__item--incoming">
             <div class="item__avatar-wrp item__avatar-wrp--body">
-                <div class="item__avatar"></div>
+                <img src="${avatar1}" alt="avatar">
             </div>
             <div class="item__text">
                 <span class="text__name">Александра Макарова</span>
@@ -87,7 +91,7 @@ export default
         </div>
         <div class="body__item body__item--outgoing">
             <div class="item__avatar-wrp item__avatar-wrp--body">
-                <div class="item__avatar"></div>
+                <img src="${avatar3}" alt="avatar">
             </div>
             <div class="item__text">
                 <p class="text__cintent">

@@ -1,8 +1,10 @@
+import avatar3 from "../../assets/img/users__avatars/avatar-3.png"
+
 export default
 `<div class="personal-account">
     <div class="personal-account__form">
         <div class="item__avatar-wrp">
-            <div class="item__avatar"></div>
+            <img src="${avatar3}" alt="avatar">
         </div>
         <span class="form__name">Григорий</span>
         <div class="form__inputs">

@@ -1,3 +1,7 @@
+import avatar1 from "../../../assets/img/users__avatars/avatar.png"
+import avatar2 from "../../../assets/img/users__avatars/avatar-2.png"
+
+
 export default
 `<div class="chat-list">
     <h3 class="chat-list__title">Чаты</h3>
@@ -16,7 +20,7 @@ export default
         <div class="chats__item">
             <span class="item__chat-time">10:42</span>
             <div class="item__avatar-wrp">
-                <div class="item__avatar"></div>
+                <img src="${avatar2}" alt="avatar">
             </div>
             <span class="item__chat-name">Practicum Team</span>
             <span class="item__chat-text">Привет, ребята, зацените новую фучу!</span>
@@ -24,7 +28,7 @@ export default
         <div class="chats__item">
             <span class="item__chat-time">10:42</span>
             <div class="item__avatar-wrp">
-                <div class="item__avatar"></div>
+                <img src="${avatar1}" alt="avatar">
             </div>
             <span class="item__chat-name">Александра Макарова</span>
             <span class="item__chat-text">Привет, как дела!</span>
@@ -32,7 +36,7 @@ export default
         <div class="chats__item">
             <span class="item__chat-time">10:42</span>
             <div class="item__avatar-wrp">
-                <div class="item__avatar"></div>
+                <img src="${avatar1}" alt="avatar">
             </div>
             <span class="item__chat-name">Сергей Сазон</span>
             <span class="item__chat-text">Привет, как дела!</span>
@@ -40,7 +44,7 @@ export default
         <div class="chats__item">
             <span class="item__chat-time">10:42</span>
             <div class="item__avatar-wrp">
-                <div class="item__avatar"></div>
+                <img src="${avatar1}" alt="avatar">
             </div>
             <span class="item__chat-name">Practicum Team</span>
             <span class="item__chat-text">Привет, ребята, зацените новую фучу!</span>
@@ -48,7 +52,7 @@ export default
         <div class="chats__item">
             <span class="item__chat-time">10:42</span>
             <div class="item__avatar-wrp">
-                <div class="item__avatar"></div>
+                <img src="${avatar1}" alt="avatar">
             </div>
             <span class="item__chat-name">Practicum Team</span>
             <span class="item__chat-text">Привет, ребята, зацените новую фучу!</span>
@@ -56,7 +60,7 @@ export default
         <div class="chats__item">
             <span class="item__chat-time">10:42</span>
             <div class="item__avatar-wrp">
-                <div class="item__avatar"></div>
+                <img src="${avatar1}" alt="avatar">
             </div>
             <span class="item__chat-name">Practicum Team</span>
             <span class="item__chat-text">Привет, ребята, зацените новую фучу!</span>
@@ -64,7 +68,7 @@ export default
         <div class="chats__item">
             <span class="item__chat-time">10:42</span>
             <div class="item__avatar-wrp">
-                <div class="item__avatar"></div>
+                <img src="${avatar1}" alt="avatar">
             </div>
             <span class="item__chat-name">Practicum Team</span>
             <span class="item__chat-text">Привет, ребята, зацените новую фучу!</span>
@@ -72,7 +76,7 @@ export default
         <div class="chats__item">
             <span class="item__chat-time">10:42</span>
             <div class="item__avatar-wrp">
-                <div class="item__avatar"></div>
+                <img src="${avatar1}" alt="avatar">
             </div>
             <span class="item__chat-name">Practicum Team</span>
             <span class="item__chat-text">Привет, ребята, зацените новую фучу!</span>
