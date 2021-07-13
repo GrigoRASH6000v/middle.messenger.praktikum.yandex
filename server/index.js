@@ -12,4 +12,4 @@ app.use(express.static(path.join(process.cwd() + "/dist")));
 
 app.listen(PORT, function () {
   console.log(`Example app listening on port ${PORT}!`);
-});__dirname
+});
