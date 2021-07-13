@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "parcel serve ./public/index.html --port 3000",
+    "dev": "parcel serve ./public/index.html --port 3000",
     "build": "parcel build ./public/index.html",
-    "serve": "node server/index.js"
+    "start": "node server/index.js"
   },
   "repository": {
     "type": "git",
