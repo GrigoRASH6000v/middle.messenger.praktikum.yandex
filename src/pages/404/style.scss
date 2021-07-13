@@ -3,7 +3,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    .page-warning__warning{
+    &__warning{
         display: grid;
         justify-items: center;
         row-gap: .9rem;

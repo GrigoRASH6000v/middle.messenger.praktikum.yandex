@@ -1,4 +1,7 @@
 export default function get(obj, path, defaultValue) {
+  if(typeof path !== 'string' ){
+    return
+  }
   const keys = path.split(".");
 
   let result = obj;

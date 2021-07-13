@@ -1,21 +1,21 @@
 import get from "../utils/modules/get";
 
 export default class Templator {
-  TEMPLATE_REGEXP = /\{\{(.*?)\}\}/gi;
-  COMPONENTS_REGEXP = /\<(.*?) ?\/\>/gi;
   constructor(data) {
     this._template = data.template;
     this._ctx = data.data;
     this._methods = data._methods;
     this._data = data;
   }
+  static TEMPLATE_REGEXP = /\{\{(.*?)\}\}/gi;
+  static COMPONENTS_REGEXP = /\<(.*?) ?\/\>/gi;
   compile() {
     return this._compileTemplate();
   }
   _compileTemplate() {
     let tmpl = this._template;
     let key = null;
-    const regExpData = this.TEMPLATE_REGEXP;
+    const regExpData = Templator.TEMPLATE_REGEXP;
     while ((key = regExpData.exec(tmpl))) {
       if (key[1]) {
         const tmplValue = key[1].trim();
