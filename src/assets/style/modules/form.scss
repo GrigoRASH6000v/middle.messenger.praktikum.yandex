@@ -1,0 +1,26 @@
+%form {
+    box-shadow: 0px 0px 10px rgba(135, 135, 135, 0.3);
+    padding: 2rem;
+    display: flex;
+    max-width: 42rem;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    border-radius: 1rem;
+    .form__container{
+        width: 100%;
+        max-width: 30rem;
+        display: grid;
+        row-gap: 3.4rem;
+    }
+    .title-h2{
+        justify-self: center;
+        margin-bottom: 3.5rem;
+    }
+    .form__buttons{
+        display: grid;
+        row-gap: 1rem;
+    }
+}
+

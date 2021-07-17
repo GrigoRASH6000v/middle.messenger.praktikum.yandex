@@ -1,17 +1,19 @@
 export default `<div class="login">
-<div class="form login__form">
-  <h3 class="form__title">Вход</h3>
-  <label for="form_input-login" class="label">
+<div class="login__form">
+  <div class="form__container">
+    <h3 class="title-h2">Вход</h3>
+  <label class="label">
     Логин
-    <input placeholder="ivanov@mail.ru" id="form_input-login" class="input input--border-botoom" type="text">
+    <input placeholder="ivanov@mail.ru" class="input input--border-bottom" type="text">
   </label>
-  <label for="form_input-password" class="label">
+  <label class="label label--last">
     Пароль
-    <input id="form_input-password" class="input input--border-botoom" type="password">
+    <input class="input input--border-bottom" type="password">
   </label>
   <div class="form__buttons">
     <a class="router-link link-btn" href="/" >Войти</a>
     <a class="router-link link-btn--text" href="/registration">Нет аккаунта?</a>
   </div>
 </div>
+  </div>
 </div>`;
