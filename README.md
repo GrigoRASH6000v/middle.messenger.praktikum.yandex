@@ -1,3 +1,4 @@
+
 ### Chat app
  
  Простое и лёгкое приложение для отправки сообщений.
@@ -10,5 +11,3 @@
 - `npm run build` — сборка стабильной версии.
 
 Макет Figma https://www.figma.com/file/TMTziCLpMrqJp1Y8m3KLnU/messanger?node-id=15%3A344
-
-Прототип запускается на странице Proto
