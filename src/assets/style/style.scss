@@ -5,9 +5,12 @@
 @import "./modules/inputs.scss";
 @import "./modules/links.scss";
 @import "./modules/buttons.scss";
+@import "./modules/form.scss";
+@import "./modules/text.scss";
+@import "./modules/label.scss";
 
-@import "../../pages/login/style.scss";
 @import "../../app/style.scss";
+@import "../../pages/login/style.scss";
 @import "../../components/navigation/style.scss";
 @import "../../pages/home/style.scss";
 @import "../../pages/home/chatList/style.scss";
@@ -15,3 +18,4 @@
 @import "../../pages/home/chatField/style.scss";
 @import "../../pages/personal_account/style.scss";
 @import "../../pages/404/style.scss";
+@import "../../pages/registration/style.scss"

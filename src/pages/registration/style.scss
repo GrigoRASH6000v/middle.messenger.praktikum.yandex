@@ -1,0 +1,10 @@
+.registration{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+.registration__form{
+    @extend %form ;
+    max-height: 74rem;
+}
