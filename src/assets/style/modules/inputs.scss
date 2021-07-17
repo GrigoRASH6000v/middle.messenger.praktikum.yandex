@@ -1,0 +1,18 @@
+.input{
+    width: 100%;
+    outline: none;
+    color: $brand-clr-2;
+    font-size: 1.6rem;
+    padding: .9rem 0;
+}
+
+.input--border-botoom{
+    border: none;
+    border-bottom: 1px solid $grey-clr;
+}
+
+.label{
+    font-size: 1.2rem;
+    font-family: 'Gilroy-Regular';
+    color: $text-clr-3;
+}

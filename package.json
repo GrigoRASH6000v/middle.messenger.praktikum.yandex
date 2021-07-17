@@ -1,0 +1,33 @@
+{
+  "name": "first_module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel serve ./public/index.html --port 3000",
+    "build": "parcel build ./public/index.html",
+    "serve": "node server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GrigoRASH6000v/middle.messenger.praktikum.yandex.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GrigoRASH6000v/first_module/issues"
+  },
+  "homepage": "https://github.com/GrigoRASH6000v/first_module#readme",
+  "devDependencies": {
+    "express": "^4.17.1",
+    "parcel-bundler": "^1.12.5",
+    "sharp": "^0.28.3"
+  },
+  "dependencies": {
+    "b_": "^1.3.4",
+    "normalize.css": "^8.0.1",
+    "sass": "^1.35.1"
+  },
+  "engine": "14.15.0"
+}
