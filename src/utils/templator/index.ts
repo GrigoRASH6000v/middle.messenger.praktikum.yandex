@@ -1,6 +1,11 @@
-import get from "../utils/modules/get";
+import get from "../modules/get";
 
-export default class Templator {
+ class Templator {
+  _template:string
+  _ctx:object
+  _methods: object
+  _data: object 
+  
   constructor(data) {
     this._template = data.template;
     this._ctx = data.data;
@@ -9,10 +14,11 @@ export default class Templator {
   }
   static TEMPLATE_REGEXP = /\{\{(.*?)\}\}/gi;
   static COMPONENTS_REGEXP = /\<(.*?) ?\/\>/gi;
-  compile() {
+
+  public compile():string {
     return this._compileTemplate();
   }
-  _compileTemplate() {
+  private _compileTemplate():string {
     let tmpl = this._template;
     let key = null;
     const regExpData = Templator.TEMPLATE_REGEXP;
@@ -41,3 +47,5 @@ export default class Templator {
     return tmpl;
   }
 }
+
+export default Templator

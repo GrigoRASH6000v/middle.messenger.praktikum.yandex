@@ -1,11 +1,13 @@
 import last from "./modules/last";
-import first from "./modules/first";
+import first from "./modules/first.ts";
 import range from "./modules/range";
 import rangeright from "./modules/rangeright";
 import isEmpty from "./modules/isEmpty";
 import get from "./modules/get";
 
-export default {
+let utils: object;
+
+utils = {
   last,
   first,
   range,
@@ -13,3 +15,5 @@ export default {
   isEmpty,
   get,
 };
+
+export default utils;
