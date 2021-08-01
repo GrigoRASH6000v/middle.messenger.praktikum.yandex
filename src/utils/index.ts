@@ -1,19 +1,19 @@
-import last from "./modules/last";
-import first from "./modules/first.ts";
-import range from "./modules/range";
-import rangeright from "./modules/rangeright";
-import isEmpty from "./modules/isEmpty";
-import get from "./modules/get";
+import last from './modules/last.ts';
+import first from './modules/first.ts';
+import range from './modules/range.ts';
+import rangeright from './modules/rangeright.ts';
+import isEmpty from './modules/isEmpty.ts';
+import get from './modules/get.ts';
+import renderDom from './renderDom';
+import { isUndefined } from './modules/isUndefined.ts';
 
-let utils: object;
-
-utils = {
+export const utils = {
+  renderDom,
   last,
   first,
   range,
   rangeright,
   isEmpty,
   get,
+  isUndefined,
 };
-
-export default utils;

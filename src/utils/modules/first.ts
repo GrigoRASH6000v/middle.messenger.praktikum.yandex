@@ -1,8 +1,7 @@
-const first = list => {
+const first = (list) => {
   if (Array.isArray(list)) {
     return list.length ? list[0] : undefined;
   }
-  return;
 };
 
 export default first;

@@ -1,4 +1,4 @@
-import avatar3 from "../../assets/img/users__avatars/avatar-3.png";
+import avatar3 from '../../assets/img/users__avatars/avatar-3.png';
 
 export default `<div class="personal-account">
     <div class="personal-account__form">
