@@ -5,12 +5,7 @@
   grid-template-columns: 8rem 1fr;
 }
 .container {
-  overflow: hidden;
+  overflow-y: hidden;
   height: 100%;
   display: grid;
-  grid-template-columns: 8rem 1fr;
-  .main {
-    height: 100%;
-    overflow: hidden;
-  }
 }

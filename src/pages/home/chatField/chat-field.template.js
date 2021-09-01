@@ -14,7 +14,7 @@ export const chatFieldTemplate = `<div class="chat-field">
         <iconDotes />
     </div>
     <div class="chat-field__body">
-        <div class="body__item body__item--incoming">
+        <div class="body__item body__item--incoming" v-for="maessage of chatList" :key="maessage.id">
             <div class="item__avatar-wrp item__avatar-wrp--body">
                 <img src="${avatar1}" alt="avatar">
             </div>
@@ -29,7 +29,7 @@ export const chatFieldTemplate = `<div class="chat-field">
                 <span class="text__last-date">8 минут назад</span>
             </div>
         </div>
-        <div class="body__item body__item--outgoing">
+        <!-- <div class="body__item body__item--outgoing">
             <div class="item__avatar-wrp item__avatar-wrp--body">
                 <img src="${avatar3}" alt="avatar">
             </div>
@@ -100,6 +100,6 @@ export const chatFieldTemplate = `<div class="chat-field">
                 </p>
                 <span class="text__last-date">8 минут назад</span>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>`;

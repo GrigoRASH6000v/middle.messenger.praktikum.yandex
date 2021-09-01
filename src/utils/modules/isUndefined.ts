@@ -1,3 +1,1 @@
-export const isUndefined = (v) => {
-  return typeof v === 'undefined';
-};
+export const isUndefined = (v: unknown): boolean => typeof v === 'undefined';

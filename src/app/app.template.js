@@ -1,6 +1,6 @@
 export const appTemplate = `
     <div class="app">
         <navigation></navigation>
-        <home></home>
+        <router-view class="container"/>
     </div>
 `;

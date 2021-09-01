@@ -2,8 +2,8 @@ import { navigationTemplate } from './navigation.template.js';
 import { Block } from '../../framework/core/block';
 
 class Navigation extends Block {
-  constructor(props) {
-    super(props);
+  constructor(properties) {
+    super(properties);
   }
 }
 

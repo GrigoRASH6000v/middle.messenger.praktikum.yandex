@@ -282,6 +282,125 @@ function isEmpty(value) {
 }
 
 exports.default = isEmpty;
+},{}],"../src/framework/core/fetch.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.requestHTTP = void 0;
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var METHODS = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  PATCH: 'PATCH',
+  DELETE: 'DELETE'
+};
+
+function queryStringify(data) {
+  var query = '';
+
+  for (var key in data) {
+    query ? query += '&' : query += '?';
+    query += "".concat(key, "=").concat(data[key]);
+  }
+
+  return query;
+}
+
+function setHeaders(xhr, headers) {
+  for (var key in headers) {
+    xhr.setRequestHeader(key, headers[key]);
+  }
+
+  return xhr;
+}
+
+var HTTPTransport = function HTTPTransport() {
+  var _this = this;
+
+  _classCallCheck(this, HTTPTransport);
+
+  _defineProperty(this, "get", function (url) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    return _this.request(url, _objectSpread(_objectSpread({}, options), {}, {
+      method: METHODS.GET
+    }), options.timeout);
+  });
+
+  _defineProperty(this, "post", function (url) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    options = options.headers ? options : {
+      data: options,
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    };
+    return _this.request(url, _objectSpread(_objectSpread({}, options), {}, {
+      method: METHODS.POST
+    }), options.timeout);
+  });
+
+  _defineProperty(this, "put", function (url) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    options = options.headers ? options : {
+      data: options,
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    };
+    return _this.request(url, _objectSpread(_objectSpread({}, options), {}, {
+      method: METHODS.PUT
+    }), options.timeout);
+  });
+
+  _defineProperty(this, "delete", function (url) {
+    return _this.request(url, {
+      method: METHODS.DELETE
+    });
+  });
+
+  _defineProperty(this, "request", function (url, options) {
+    var timeout = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 5000;
+    var method = options.method,
+        data = options.data,
+        headers = options.headers;
+    return new Promise(function (resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      url = method === METHODS.GET ? data ? url += queryStringify(data) : url : url;
+      xhr.open(method, url);
+      xhr = setHeaders(xhr, headers);
+
+      xhr.onload = function () {
+        resolve(xhr);
+      };
+
+      var handleError = function handleError(err) {
+        console.log(err);
+      };
+
+      xhr.onabort = reject;
+      xhr.onerror = handleError;
+      xhr.ontimeout = reject;
+      if (method === METHODS.GET || method === METHODS.DELETE) xhr.send();
+      if (method === METHODS.POST || method === METHODS.PUT) xhr.send(JSON.stringify(data));
+
+      if (xhr.status != 200) {}
+    });
+  });
+};
+
+var requestHTTP = new HTTPTransport();
+exports.requestHTTP = requestHTTP;
 },{}],"../node_modules/vue-template-compiler/browser.js":[function(require,module,exports) {
 var define;
 var global = arguments[3];
@@ -6067,6 +6186,8 @@ var _ebentBus = require("./ebent-bus");
 
 var _isEmpty = _interopRequireDefault(require("../../utils/modules/isEmpty"));
 
+var _fetch = require("./fetch");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -6092,6 +6213,7 @@ var Block = /*#__PURE__*/function () {
 
     this.el = null;
     var eventBus = new _ebentBus.EventBus();
+    this.$requestHTTP = _fetch.requestHTTP;
     this.props = props;
     this.components = props.components;
     this.template = props.template;
@@ -6143,6 +6265,8 @@ var Block = /*#__PURE__*/function () {
         if (this.components) this.components.forEach(function (c) {
           return c.init();
         });
+      } else {
+        return this.getNode();
       }
 
       this.mounted();
@@ -6204,7 +6328,13 @@ var Block = /*#__PURE__*/function () {
       if (!obj.children) return;
       var children = obj.children;
       var nodeElement = document.createElement(obj.tag);
-      if (!(0, _isEmpty.default)(obj.attrsMap)) this._setAttrs(nodeElement, obj.attrsMap);
+
+      if (!(0, _isEmpty.default)(obj.attrsMap)) {
+        // if (obj.attrsMap['v-for'])
+        //   this._createCicle(obj.attrsMap['v-for'], nodeElement);
+        this._setAttrs(nodeElement, obj.attrsMap);
+      }
+
       if (children) children.forEach(function (child) {
         child.type === 3 ? nodeElement.textContent = child.text : null;
 
@@ -6224,7 +6354,21 @@ var Block = /*#__PURE__*/function () {
       }
 
       return nodeElement;
-    }
+    } //Задел под v-for
+    // _createCicle(atr, element) {
+    //   console.log(atr, element);
+    //   let splitAtr = atr.split('of');
+    //   let elementArray = splitAtr[0].trim();
+    //   let arrayName = splitAtr[1].trim();
+    //   let data = this.data[arrayName];
+    //   let nodeCollection = data.map((el) => {
+    //     let newNode = element.cloneNode(true);
+    //     console.log(newNode);
+    //     return newNode;
+    //   });
+    //   console.log(nodeCollection);
+    // }
+
   }, {
     key: "_setAttrs",
     value: function _setAttrs(element, attrs) {
@@ -6251,15 +6395,28 @@ _defineProperty(Block, "EVENTS", {
   FLOW_CDM: 'flow:component-did-mount',
   FLOW_CDU: 'flow:component-did-update'
 });
-},{"./ebent-bus":"../src/framework/core/ebent-bus.js","../../utils/modules/isEmpty":"../src/utils/modules/isEmpty.ts","vue-template-compiler":"../node_modules/vue-template-compiler/browser.js"}],"../src/app/app.template.js":[function(require,module,exports) {
+
+_defineProperty(Block, "actions", {
+  'v-for': '_initСycle'
+});
+},{"./ebent-bus":"../src/framework/core/ebent-bus.js","../../utils/modules/isEmpty":"../src/utils/modules/isEmpty.ts","./fetch":"../src/framework/core/fetch.js","vue-template-compiler":"../node_modules/vue-template-compiler/browser.js"}],"../src/app/app.template.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.appTemplate = void 0;
-var appTemplate = "\n    <div class=\"app\">\n        <navigation></navigation>\n        <home></home>\n    </div>\n";
+var appTemplate = "\n    <div class=\"app\">\n        <navigation></navigation>\n        <router-view class=\"container\"/>\n    </div>\n";
 exports.appTemplate = appTemplate;
+},{}],"../src/components/ui/icons/iconUser.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.iconUser = void 0;
+var iconUser = "<svg class=\"item-svg\" width=\"18\" height=\"20\" viewBox=\"0 0 18 20\" xmlns=\"http://www.w3.org/2000/svg\">\n<path\n    d=\"M2.37463 6.375C2.37463 9.88125 5.24338 12.75 8.74963 12.75C12.2559 12.75 15.1246 9.88125 15.1246 6.375C15.1246 2.86875 12.2559 0 8.74963 0C5.24338 0 2.37463 2.86875 2.37463 6.375ZM13.6246 6.375C13.6246 9.05625 11.4309 11.25 8.74963 11.25C6.06838 11.25 3.87463 9.05625 3.87463 6.375C3.87463 3.69375 6.06838 1.5 8.74963 1.5C11.4309 1.5 13.6246 3.69375 13.6246 6.375Z\" />\n<path\n    d=\"M1.32461 19.575C3.31211 17.5875 5.93711 16.5 8.74961 16.5C11.5621 16.5 14.1871 17.5875 16.1746 19.575L17.2434 18.5063C14.9746 16.2563 11.9559 15 8.74961 15C5.54336 15 2.52461 16.2563 0.255859 18.5063L1.32461 19.575Z\" />\n</svg>";
+exports.iconUser = iconUser;
 },{}],"../src/components/navigation/navigation.template.js":[function(require,module,exports) {
 "use strict";
 
@@ -6267,9 +6424,12 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.navigationTemplate = void 0;
-var navigationTemplate = "<nav class=\"navigation\">\n    <div class=\"navigation__item navigation__item--logo\">\n        <svg class=\"item__logo\" width=\"44\" height=\"50\" viewBox=\"0 0 44 50\" xmlns=\"http://www.w3.org/2000/svg\">\n            <path\n                d=\"M24.1427 35.8351V48.0551C24.0395 50.6492 20.3347 50.6473 20.2324 48.0551V35.8351C20.3356 33.241 24.0404 33.2429 24.1427 35.8351ZM37.4853 6.37118C29.3336 -2.12353 14.6678 -2.12402 6.5165 6.37148C-4.46933 17.0472 -0.689257 36.3121 13.5201 42.0499C13.7676 42.1539 14.0243 42.2032 14.277 42.2032C15.0406 42.2032 15.7658 41.7531 16.0803 41.0052C16.4988 40.0099 16.0311 38.8636 15.0357 38.4451C-2.90556 30.6372 2.42781 4.14442 22.0011 3.86786C41.425 4.13894 46.8922 30.2966 29.2303 38.3304C28.2419 38.7649 27.7928 39.9185 28.2272 40.9071C28.6618 41.8956 29.8155 42.3448 30.8039 41.9103C44.7663 35.9894 48.3696 16.9422 37.4853 6.37118ZM22.1876 23.0286C21.1077 23.0286 20.2324 22.1533 20.2324 21.0734V15.9899C20.3356 13.3958 24.0404 13.3977 24.1427 15.9899V21.0734C24.1427 22.1533 23.2674 23.0286 22.1876 23.0286ZM27.0246 28.9877L30.2209 25.7766C30.9827 25.0114 30.9799 23.7734 30.2146 23.0116C29.4492 22.2498 28.2113 22.2528 27.4496 23.018L24.2484 26.2339C24.2449 26.2374 24.2414 26.241 24.2379 26.2445C23.1295 27.4216 21.1572 27.4238 20.0463 26.2493L16.9464 23.0392C15.0701 21.2449 12.4064 23.8198 14.1335 25.7555L17.2391 28.9714C17.2425 28.9749 17.2458 28.9785 17.2492 28.9819C18.5533 30.3123 20.2902 31.045 22.1398 31.045C23.9866 31.0449 25.7211 30.3144 27.0246 28.9877Z\" />\n        </svg>\n    </div>\n    <div class=\"items-wrp\">\n        <a href=\"/personal-account\" class=\"router-link navigation__item\">\n            <svg class=\"item-svg\" width=\"18\" height=\"20\" viewBox=\"0 0 18 20\" xmlns=\"http://www.w3.org/2000/svg\">\n                <path\n                    d=\"M2.37463 6.375C2.37463 9.88125 5.24338 12.75 8.74963 12.75C12.2559 12.75 15.1246 9.88125 15.1246 6.375C15.1246 2.86875 12.2559 0 8.74963 0C5.24338 0 2.37463 2.86875 2.37463 6.375ZM13.6246 6.375C13.6246 9.05625 11.4309 11.25 8.74963 11.25C6.06838 11.25 3.87463 9.05625 3.87463 6.375C3.87463 3.69375 6.06838 1.5 8.74963 1.5C11.4309 1.5 13.6246 3.69375 13.6246 6.375Z\" />\n                <path\n                    d=\"M1.32461 19.575C3.31211 17.5875 5.93711 16.5 8.74961 16.5C11.5621 16.5 14.1871 17.5875 16.1746 19.575L17.2434 18.5063C14.9746 16.2563 11.9559 15 8.74961 15C5.54336 15 2.52461 16.2563 0.255859 18.5063L1.32461 19.575Z\" />\n            </svg>\n        </a>\n        <a href=\"/\" class=\"router-link navigation__item\">\n            <svg class=\"item-svg\" width=\"20\" height=\"19\" viewBox=\"0 0 20 19\" xmlns=\"http://www.w3.org/2000/svg\">\n                <path\n                    d=\"M0.75 18.1875C0.651618 18.19 0.554009 18.1695 0.465 18.1275C0.328036 18.0712 0.210791 17.9757 0.128041 17.8529C0.0452909 17.7301 0.000739111 17.5855 0 17.4375V3.77247C0.010713 3.29081 0.116222 2.81598 0.310498 2.37511C0.504775 1.93424 0.784012 1.53597 1.13226 1.20304C1.4805 0.870122 1.89093 0.609076 2.34009 0.434821C2.78925 0.260566 3.26835 0.176515 3.75 0.187472H15.75C16.2317 0.176515 16.7107 0.260566 17.1599 0.434821C17.6091 0.609076 18.0195 0.870122 18.3677 1.20304C18.716 1.53597 18.9952 1.93424 19.1895 2.37511C19.3838 2.81598 19.4893 3.29081 19.5 3.77247V10.8525C19.4893 11.3341 19.3838 11.809 19.1895 12.2498C18.9952 12.6907 18.716 13.089 18.3677 13.4219C18.0195 13.7548 17.6091 14.0159 17.1599 14.1901C16.7107 14.3644 16.2317 14.4484 15.75 14.4375H4.8075L1.2825 17.97C1.21242 18.0395 1.12931 18.0945 1.03793 18.1318C0.946552 18.1691 0.848705 18.188 0.75 18.1875ZM3.75 1.68747C3.17556 1.66717 2.61645 1.87509 2.19484 2.26578C1.77324 2.65646 1.52343 3.19816 1.5 3.77247V15.63L3.9675 13.155C4.03758 13.0855 4.12069 13.0305 4.21207 12.9931C4.30345 12.9558 4.4013 12.9369 4.5 12.9375H15.75C16.3244 12.9578 16.8836 12.7499 17.3052 12.3592C17.7268 11.9685 17.9766 11.4268 18 10.8525V3.77247C17.9766 3.19816 17.7268 2.65646 17.3052 2.26578C16.8836 1.87509 16.3244 1.66717 15.75 1.68747H3.75Z\" />\n                <path\n                    d=\"M9.75 8.43747C10.3713 8.43747 10.875 7.93379 10.875 7.31247C10.875 6.69115 10.3713 6.18747 9.75 6.18747C9.12868 6.18747 8.625 6.69115 8.625 7.31247C8.625 7.93379 9.12868 8.43747 9.75 8.43747Z\" />\n                <path\n                    d=\"M13.875 8.43747C14.4963 8.43747 15 7.93379 15 7.31247C15 6.69115 14.4963 6.18747 13.875 6.18747C13.2537 6.18747 12.75 6.69115 12.75 7.31247C12.75 7.93379 13.2537 8.43747 13.875 8.43747Z\" />\n                <path\n                    d=\"M5.625 8.43747C6.24632 8.43747 6.75 7.93379 6.75 7.31247C6.75 6.69115 6.24632 6.18747 5.625 6.18747C5.00368 6.18747 4.5 6.69115 4.5 7.31247C4.5 7.93379 5.00368 8.43747 5.625 8.43747Z\" />\n            </svg>\n        </a>\n    </div>\n</nav>";
+
+var _iconUser = require("../ui/icons/iconUser");
+
+var navigationTemplate = "<nav class=\"navigation\">\n    <div class=\"navigation__item navigation__item--logo\">\n        <i class=\"fas fa-icons logo-icon\"></i>\n    </div>\n    <div class=\"items-wrp\">\n        <a href=\"/personal-account\" class=\"router-link navigation__item\">\n            <i class=\"far fa-user\"></i>\n        </a>\n        <a href=\"/\" class=\"router-link navigation__item\">\n            <i class=\"far fa-comments\"></i>\n        </a>\n    </div>\n</nav>";
 exports.navigationTemplate = navigationTemplate;
-},{}],"../src/components/navigation/navigation.component.js":[function(require,module,exports) {
+},{"../ui/icons/iconUser":"../src/components/ui/icons/iconUser.js"}],"../src/components/navigation/navigation.component.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6318,7 +6478,280 @@ var navigation = new Navigation({
   template: _navigationTemplate.navigationTemplate
 });
 exports.navigation = navigation;
-},{"./navigation.template.js":"../src/components/navigation/navigation.template.js","../../framework/core/block":"../src/framework/core/block.js"}],"../src/pages/home/home.template.js":[function(require,module,exports) {
+},{"./navigation.template.js":"../src/components/navigation/navigation.template.js","../../framework/core/block":"../src/framework/core/block.js"}],"../src/app/app.component.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.app = void 0;
+
+var _block = require("../framework/core/block");
+
+var _app = require("./app.template");
+
+var _navigation = require("../components/navigation/navigation.component");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var App = /*#__PURE__*/function (_Block) {
+  _inherits(App, _Block);
+
+  var _super = _createSuper(App);
+
+  function App(props) {
+    _classCallCheck(this, App);
+
+    return _super.call(this, props);
+  }
+
+  return App;
+}(_block.Block);
+
+var app = new App({
+  selector: 'app',
+  template: _app.appTemplate,
+  components: [_navigation.navigation]
+});
+exports.app = app;
+},{"../framework/core/block":"../src/framework/core/block.js","./app.template":"../src/app/app.template.js","../components/navigation/navigation.component":"../src/components/navigation/navigation.component.js"}],"../src/assets/style/style.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"./..\\fonts\\Roboto-Bold\\Roboto-Bold.woff":[["Roboto-Bold.4d3922c1.woff","../src/assets/fonts/Roboto-Bold/Roboto-Bold.woff"],"../src/assets/fonts/Roboto-Bold/Roboto-Bold.woff"],"./..\\fonts\\Roboto-Bold\\Roboto-Bold.woff2":[["Roboto-Bold.ebd2841f.woff2","../src/assets/fonts/Roboto-Bold/Roboto-Bold.woff2"],"../src/assets/fonts/Roboto-Bold/Roboto-Bold.woff2"],"./..\\fonts\\Roboto-Light\\Roboto-Light.woff2":[["Roboto-Light.d443a849.woff2","../src/assets/fonts/Roboto-Light/Roboto-Light.woff2"],"../src/assets/fonts/Roboto-Light/Roboto-Light.woff2"],"./..\\fonts\\Roboto-Light\\Roboto-Light.woff":[["Roboto-Light.6ae336a8.woff","../src/assets/fonts/Roboto-Light/Roboto-Light.woff"],"../src/assets/fonts/Roboto-Light/Roboto-Light.woff"],"./..\\fonts\\Roboto-Regular\\Roboto-Regular.woff":[["Roboto-Regular.e5ddcf2f.woff","../src/assets/fonts/Roboto-Regular/Roboto-Regular.woff"],"../src/assets/fonts/Roboto-Regular/Roboto-Regular.woff"],"./..\\fonts\\Roboto-Regular\\Roboto-Regular.woff2":[["Roboto-Regular.9cc46bf3.woff2","../src/assets/fonts/Roboto-Regular/Roboto-Regular.woff2"],"../src/assets/fonts/Roboto-Regular/Roboto-Regular.woff2"],"./..\\fonts\\Gilroy\\Gilroy-Regular\\Gilroy-Regular.woff":[["Gilroy-Regular.387e0631.woff","../src/assets/fonts/Gilroy/Gilroy-Regular/Gilroy-Regular.woff"],"../src/assets/fonts/Gilroy/Gilroy-Regular/Gilroy-Regular.woff"],"./..\\fonts\\Gilroy\\Gilroy-Regular\\Gilroy-Regular.woff2":[["Gilroy-Regular.d499de7f.woff2","../src/assets/fonts/Gilroy/Gilroy-Regular/Gilroy-Regular.woff2"],"../src/assets/fonts/Gilroy/Gilroy-Regular/Gilroy-Regular.woff2"],"./..\\fonts\\Gilroy\\Gilroy-Bold\\Gilroy-Bold.woff":[["Gilroy-Bold.7374c6dd.woff","../src/assets/fonts/Gilroy/Gilroy-Bold/Gilroy-Bold.woff"],"../src/assets/fonts/Gilroy/Gilroy-Bold/Gilroy-Bold.woff"],"./..\\fonts\\Gilroy\\Gilroy-Bold\\Gilroy-Bold.woff2":[["Gilroy-Bold.46eee50f.woff2","../src/assets/fonts/Gilroy/Gilroy-Bold/Gilroy-Bold.woff2"],"../src/assets/fonts/Gilroy/Gilroy-Bold/Gilroy-Bold.woff2"],"./..\\fonts\\ProximaNova-Regular\\ProximaNova-Regular.woff":[["ProximaNova-Regular.9a349c66.woff","../src/assets/fonts/ProximaNova-Regular/ProximaNova-Regular.woff"],"../src/assets/fonts/ProximaNova-Regular/ProximaNova-Regular.woff"],"./..\\fonts\\ProximaNova-Regular\\ProximaNova-Regular.woff2":[["ProximaNova-Regular.92069095.woff2","../src/assets/fonts/ProximaNova-Regular/ProximaNova-Regular.woff2"],"../src/assets/fonts/ProximaNova-Regular/ProximaNova-Regular.woff2"],"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/framework/core/router.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Router = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Router = /*#__PURE__*/function () {
+  function Router(props) {
+    _classCallCheck(this, Router);
+
+    this.routes = props.routes;
+    this.selector = 'router-view';
+    this.pathNotFound = '*';
+    this.entryPoint = null;
+    this.currentPath = null;
+  }
+
+  _createClass(Router, [{
+    key: "find",
+    value: function find(path) {
+      var result = this.routes.find(function (element) {
+        return element.path === path;
+      });
+
+      if (result) {
+        return result.redirect ? this.find(result.redirect) : result;
+      }
+
+      var notFound = this.find(this.pathNotFound);
+      return notFound.redirect ? this.find(notFound.redirect) : notFound;
+    }
+  }, {
+    key: "mountComponent",
+    value: function mountComponent(path) {
+      if (this.currentPath !== path) {
+        var content = this.entryPoint.firstChild;
+        if (content) content.remove();
+        this.currentPath = path;
+        var currentComponent = this.find(this.currentPath);
+        var recource = this.createResources(currentComponent.component.selector);
+        this.entryPoint.appendChild(recource);
+        currentComponent.component.init();
+        this.setLocation(path);
+      }
+    }
+  }, {
+    key: "createResources",
+    value: function createResources(tag) {
+      return document.createElement(tag);
+    }
+  }, {
+    key: "init",
+    value: function init() {
+      this.entryPoint = document.querySelector(this.selector);
+      this.mountComponent(window.location.pathname);
+      this.initListeners();
+    }
+  }, {
+    key: "initListeners",
+    value: function initListeners() {
+      var _this = this;
+
+      var callback = function callback(event) {
+        event.preventDefault();
+
+        if (event.target.tagName === 'A') {
+          return _this.mountComponent(event.target.pathname);
+        }
+
+        if (event.target.parentNode.tagName === 'A') {
+          return _this.mountComponent(event.target.parentNode.pathname);
+        }
+      };
+
+      document.addEventListener('click', callback, false);
+    }
+  }, {
+    key: "setLocation",
+    value: function setLocation(path) {
+      try {
+        history.pushState(null, null, path);
+        return;
+      } catch (_unused) {}
+
+      location.hash = "#".concat(path);
+    }
+  }]);
+
+  return Router;
+}();
+
+exports.Router = Router;
+},{}],"../src/pages/login/login.template.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.loginTemplate = void 0;
+var loginTemplate = "<div class=\"login\">\n<div class=\"login__form\">\n  <div class=\"form__container\">\n    <h3 class=\"title-h2\">\u0412\u0445\u043E\u0434</h3>\n  <label class=\"label\">\n    \u041B\u043E\u0433\u0438\u043D\n    <input placeholder=\"ivanov@mail.ru\" class=\"input input--border-bottom\" type=\"text\">\n  </label>\n  <label class=\"label label--last\">\n    \u041F\u0430\u0440\u043E\u043B\u044C\n    <input class=\"input input--border-bottom\" type=\"password\">\n  </label>\n  <div class=\"form__buttons\">\n    <a class=\"router-link link-btn\" href=\"/\" >\u0412\u043E\u0439\u0442\u0438</a>\n    <a class=\"router-link link-btn--text\" href=\"/registration\">\u041D\u0435\u0442 \u0430\u043A\u043A\u0430\u0443\u043D\u0442\u0430?</a>\n  </div>\n</div>\n  </div>\n</div>";
+exports.loginTemplate = loginTemplate;
+},{}],"../src/pages/login/login.component.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.loginPage = void 0;
+
+var _block = require("../../framework/core/block");
+
+var _login = require("./login.template");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var LoginPage = /*#__PURE__*/function (_Block) {
+  _inherits(LoginPage, _Block);
+
+  var _super = _createSuper(LoginPage);
+
+  function LoginPage(props) {
+    _classCallCheck(this, LoginPage);
+
+    return _super.call(this, props);
+  }
+
+  return LoginPage;
+}(_block.Block);
+
+var loginPage = new LoginPage({
+  selector: 'login',
+  template: _login.loginTemplate
+});
+exports.loginPage = loginPage;
+},{"../../framework/core/block":"../src/framework/core/block.js","./login.template":"../src/pages/login/login.template.js"}],"../src/pages/registration/registration.template.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.registrationPageTemplate = void 0;
+var registrationPageTemplate = "<div class=\"registration\">\n    <div class=\"registration__form\">\n        <div class=\"form__container\">\n            <h3 class=\"title-h2\">\u0420\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u044F</h3>\n            <label class=\"label\">\n                \u041F\u043E\u0447\u0442\u0430\n                <input placeholder=\"ivanov@mail.ru\" class=\"input input--border-bottom\" type=\"text\">\n            </label>\n            <label class=\"label\">\n                \u041B\u043E\u0433\u0438\u043D\n                <input placeholder=\"ivanov@mail.ru\" class=\"input input--border-bottom\" type=\"text\">\n            </label>\n            <label class=\"label\">\n                \u0418\u043C\u044F\n                <input placeholder=\"ivanov@mail.ru\" class=\"input input--border-bottom\" type=\"text\">\n            </label>\n            <label class=\"label\">\n                \u0424\u0430\u043C\u0438\u043B\u0438\u044F\n                <input placeholder=\"ivanov@mail.ru\" class=\"input input--border-bottom\" type=\"text\">\n            </label>\n            <label class=\"label\">\n                \u0422\u0435\u043B\u0435\u0444\u043E\u043D\n                <input placeholder=\"ivanov@mail.ru\" class=\"input input--border-bottom\" type=\"text\">\n            </label>\n            <label class=\"label\">\n                \u041F\u0430\u0440\u043E\u043B\u044C\n                <input class=\"input input--border-bottom\" type=\"password\">\n            </label>\n            <label class=\"label\">\n                \u041F\u0430\u0440\u043E\u043B\u044C (\u0435\u0449\u0451 \u0440\u0430\u0437)\n                <input class=\"input input--border-bottom\" type=\"password\">\n            </label>\n            <div class=\"form__buttons\">\n                <a class=\"link-btn\" href=\"/login\">\u0417\u0430\u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0438\u0440\u043E\u0432\u0430\u0442\u044C\u0441\u044F</a>\n                <a class=\"link-btn--text\" href=\"/\">\u0412\u043E\u0439\u0442\u0438</a>\n            </div>\n        </div>\n    </div>\n</div>";
+exports.registrationPageTemplate = registrationPageTemplate;
+},{}],"../src/pages/registration/registration.component.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.registrationPage = void 0;
+
+var _block = require("../../framework/core/block");
+
+var _registration = require("./registration.template");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var RegistrationPage = /*#__PURE__*/function (_Block) {
+  _inherits(RegistrationPage, _Block);
+
+  var _super = _createSuper(RegistrationPage);
+
+  function RegistrationPage(props) {
+    _classCallCheck(this, RegistrationPage);
+
+    return _super.call(this, props);
+  }
+
+  return RegistrationPage;
+}(_block.Block);
+
+var registrationPage = new RegistrationPage({
+  selector: 'registration',
+  template: _registration.registrationPageTemplate
+});
+exports.registrationPage = registrationPage;
+},{"../../framework/core/block":"../src/framework/core/block.js","./registration.template":"../src/pages/registration/registration.template.js"}],"../src/pages/home/home.template.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6345,7 +6778,7 @@ var _avatar2 = _interopRequireDefault(require("../../../assets/img/users__avatar
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var chatFieldTemplate = "<div class=\"chat-field\">\n    <div class=\"chat-field__header\">\n        <div class=\"header__chat-info\">\n            <div class=\"item__avatar-wrp\">\n                <img src=\"".concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"chat-info__name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n            <span class=\"chat-info__status\">online</span>\n        </div>\n        <iconUserAdd />\n        <iconDotes />\n    </div>\n    <div class=\"chat-field__body\">\n        <div class=\"body__item body__item--incoming\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <span class=\"text__name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n        <div class=\"body__item body__item--outgoing\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar2.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n        <div class=\"body__item body__item--incoming\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <span class=\"text__name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n        <div class=\"body__item body__item--outgoing\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar2.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n        <div class=\"body__item body__item--incoming\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <span class=\"text__name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n        <div class=\"body__item body__item--outgoing\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar2.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n    </div>\n</div>");
+var chatFieldTemplate = "<div class=\"chat-field\">\n    <div class=\"chat-field__header\">\n        <div class=\"header__chat-info\">\n            <div class=\"item__avatar-wrp\">\n                <img src=\"".concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"chat-info__name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n            <span class=\"chat-info__status\">online</span>\n        </div>\n        <iconUserAdd />\n        <iconDotes />\n    </div>\n    <div class=\"chat-field__body\">\n        <div class=\"body__item body__item--incoming\" v-for=\"maessage of chatList\" :key=\"maessage.id\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <span class=\"text__name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n        <!-- <div class=\"body__item body__item--outgoing\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar2.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n        <div class=\"body__item body__item--incoming\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <span class=\"text__name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n        <div class=\"body__item body__item--outgoing\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar2.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n        <div class=\"body__item body__item--incoming\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <span class=\"text__name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n        <div class=\"body__item body__item--outgoing\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar2.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div> -->\n    </div>\n</div>");
 exports.chatFieldTemplate = chatFieldTemplate;
 },{"../../../assets/img/users__avatars/avatar.png":"../src/assets/img/users__avatars/avatar.png","../../../assets/img/users__avatars/avatar-3.png":"../src/assets/img/users__avatars/avatar-3.png"}],"../src/pages/home/chatField/chat-field.component.js":[function(require,module,exports) {
 "use strict";
@@ -6362,6 +6795,10 @@ var _chatField = require("./chat-field.template");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -6388,10 +6825,31 @@ var ChatField = /*#__PURE__*/function (_Block) {
     return _super.call(this, props);
   }
 
+  _createClass(ChatField, [{
+    key: "mounted",
+    value: function mounted() {// this.$requestHTTP
+      //   .get('https://jsonplaceholder.typicode.com/posts')
+      //   .then((res) => console.log(JSON.parse(res.response)));
+    }
+  }]);
+
   return ChatField;
 }(_block.Block);
 
 var chatField = new ChatField({
+  data: {
+    chatList: [{
+      body: 'quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto',
+      id: 1,
+      title: 'sunt aut facere repellat provident occaecati excepturi optio reprehenderit',
+      userId: 1
+    }, {
+      body: 'est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\nqui aperiam non debitis possimus qui neque nisi nulla',
+      id: 2,
+      title: 'qui est esse',
+      userId: 1
+    }]
+  },
   selector: 'chatfield',
   template: _chatField.chatFieldTemplate
 });
@@ -6410,11 +6868,13 @@ var _avatar = _interopRequireDefault(require("../../../assets/img/users__avatars
 
 var _avatar2 = _interopRequireDefault(require("../../../assets/img/users__avatars/avatar-2.png"));
 
+var _iconUser = require("../../../components/ui/icons/iconUser");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var chatListTemplate = "\n<div class=\"chat-list\">\n    <h3 class=\"chat-list__title\">\u0427\u0430\u0442\u044B</h3>\n    <div class=\"input-wrp\">\n        <svg class=\"input__icon\" width=\"21\" height=\"22\" viewBox=\"0 0 21 22\" xmlns=\"http://www.w3.org/2000/svg\">\n            <path fill-rule=\"evenodd\" clip-rule=\"evenodd\"\n                d=\"M13.4271 15.4271C12.0372 16.4175 10.3367 17 8.5 17C3.80558 17 0 13.1944 0 8.5C0 3.80558 3.80558 0 8.5 0C13.1944 0 17 3.80558 17 8.5C17 10.8472 16.0486 12.9722 14.5104 14.5104L20.5078 20.5078C20.7828 20.7828 20.7761 21.2239 20.5 21.5C20.2219 21.7781 19.7796 21.7796 19.5078 21.5078L13.4271 15.4271ZM8.5 16C12.6421 16 16 12.6421 16 8.5C16 4.35786 12.6421 1 8.5 1C4.35786 1 1 4.35786 1 8.5C1 12.6421 4.35786 16 8.5 16Z\" />\n        </svg>\n        <input class=\"input\" type=\"text\" placeholder=\"\u041F\u043E\u0438\u0441\u043A\">\n    </div>\n    <button class=\"btn\">\n        <iconPlusOutline/>\n        <span>\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0447\u0430\u0442</span>\n    </button>\n    <testComponents/>\n    <div class=\"chat-list__chats\">\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"".concat(_avatar2.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">Practicum Team</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u0440\u0435\u0431\u044F\u0442\u0430, \u0437\u0430\u0446\u0435\u043D\u0438\u0442\u0435 \u043D\u043E\u0432\u0443\u044E \u0444\u0443\u0447\u0443!</span>\n        </div>\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u043A\u0430\u043A \u0434\u0435\u043B\u0430!</span>\n        </div>\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">\u0421\u0435\u0440\u0433\u0435\u0439 \u0421\u0430\u0437\u043E\u043D</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u043A\u0430\u043A \u0434\u0435\u043B\u0430!</span>\n        </div>\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">Practicum Team</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u0440\u0435\u0431\u044F\u0442\u0430, \u0437\u0430\u0446\u0435\u043D\u0438\u0442\u0435 \u043D\u043E\u0432\u0443\u044E \u0444\u0443\u0447\u0443!</span>\n        </div>\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">Practicum Team</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u0440\u0435\u0431\u044F\u0442\u0430, \u0437\u0430\u0446\u0435\u043D\u0438\u0442\u0435 \u043D\u043E\u0432\u0443\u044E \u0444\u0443\u0447\u0443!</span>\n        </div>\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">Practicum Team</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u0440\u0435\u0431\u044F\u0442\u0430, \u0437\u0430\u0446\u0435\u043D\u0438\u0442\u0435 \u043D\u043E\u0432\u0443\u044E \u0444\u0443\u0447\u0443!</span>\n        </div>\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">Practicum Team</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u0440\u0435\u0431\u044F\u0442\u0430, \u0437\u0430\u0446\u0435\u043D\u0438\u0442\u0435 \u043D\u043E\u0432\u0443\u044E \u0444\u0443\u0447\u0443!</span>\n        </div>\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">Practicum Team</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u0440\u0435\u0431\u044F\u0442\u0430, \u0437\u0430\u0446\u0435\u043D\u0438\u0442\u0435 \u043D\u043E\u0432\u0443\u044E \u0444\u0443\u0447\u0443!</span>\n        </div>\n    </div>\n</div>");
+var chatListTemplate = "\n<div class=\"chat-list\">\n    <h3 class=\"chat-list__title\">\u0427\u0430\u0442\u044B</h3>\n    <div class=\"input-wrp\">\n        <svg class=\"input__icon\" width=\"21\" height=\"22\" viewBox=\"0 0 21 22\" xmlns=\"http://www.w3.org/2000/svg\">\n            <path fill-rule=\"evenodd\" clip-rule=\"evenodd\"\n                d=\"M13.4271 15.4271C12.0372 16.4175 10.3367 17 8.5 17C3.80558 17 0 13.1944 0 8.5C0 3.80558 3.80558 0 8.5 0C13.1944 0 17 3.80558 17 8.5C17 10.8472 16.0486 12.9722 14.5104 14.5104L20.5078 20.5078C20.7828 20.7828 20.7761 21.2239 20.5 21.5C20.2219 21.7781 19.7796 21.7796 19.5078 21.5078L13.4271 15.4271ZM8.5 16C12.6421 16 16 12.6421 16 8.5C16 4.35786 12.6421 1 8.5 1C4.35786 1 1 4.35786 1 8.5C1 12.6421 4.35786 16 8.5 16Z\" />\n        </svg>\n        <input class=\"input\" type=\"text\" placeholder=\"\u041F\u043E\u0438\u0441\u043A\">\n    </div>\n    <button class=\"btn\">\n        <span>\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0447\u0430\u0442</span>\n    </button>\n    <testComponents/>\n    <div class=\"chat-list__chats\">\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"".concat(_avatar2.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">Practicum Team</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u0440\u0435\u0431\u044F\u0442\u0430, \u0437\u0430\u0446\u0435\u043D\u0438\u0442\u0435 \u043D\u043E\u0432\u0443\u044E \u0444\u0443\u0447\u0443!</span>\n        </div>\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u043A\u0430\u043A \u0434\u0435\u043B\u0430!</span>\n        </div>\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">\u0421\u0435\u0440\u0433\u0435\u0439 \u0421\u0430\u0437\u043E\u043D</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u043A\u0430\u043A \u0434\u0435\u043B\u0430!</span>\n        </div>\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">Practicum Team</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u0440\u0435\u0431\u044F\u0442\u0430, \u0437\u0430\u0446\u0435\u043D\u0438\u0442\u0435 \u043D\u043E\u0432\u0443\u044E \u0444\u0443\u0447\u0443!</span>\n        </div>\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">Practicum Team</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u0440\u0435\u0431\u044F\u0442\u0430, \u0437\u0430\u0446\u0435\u043D\u0438\u0442\u0435 \u043D\u043E\u0432\u0443\u044E \u0444\u0443\u0447\u0443!</span>\n        </div>\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">Practicum Team</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u0440\u0435\u0431\u044F\u0442\u0430, \u0437\u0430\u0446\u0435\u043D\u0438\u0442\u0435 \u043D\u043E\u0432\u0443\u044E \u0444\u0443\u0447\u0443!</span>\n        </div>\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">Practicum Team</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u0440\u0435\u0431\u044F\u0442\u0430, \u0437\u0430\u0446\u0435\u043D\u0438\u0442\u0435 \u043D\u043E\u0432\u0443\u044E \u0444\u0443\u0447\u0443!</span>\n        </div>\n        <div class=\"chats__item\">\n            <span class=\"item__chat-time\">10:42</span>\n            <div class=\"item__avatar-wrp\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"item__chat-name\">Practicum Team</span>\n            <span class=\"item__chat-text\">\u041F\u0440\u0438\u0432\u0435\u0442, \u0440\u0435\u0431\u044F\u0442\u0430, \u0437\u0430\u0446\u0435\u043D\u0438\u0442\u0435 \u043D\u043E\u0432\u0443\u044E \u0444\u0443\u0447\u0443!</span>\n        </div>\n    </div>\n</div>");
 exports.chatListTemplate = chatListTemplate;
-},{"../../../assets/img/users__avatars/avatar.png":"../src/assets/img/users__avatars/avatar.png","../../../assets/img/users__avatars/avatar-2.png":"../src/assets/img/users__avatars/avatar-2.png"}],"../src/pages/home/chatList/chat-list.component.js":[function(require,module,exports) {
+},{"../../../assets/img/users__avatars/avatar.png":"../src/assets/img/users__avatars/avatar.png","../../../assets/img/users__avatars/avatar-2.png":"../src/assets/img/users__avatars/avatar-2.png","../../../components/ui/icons/iconUser":"../src/components/ui/icons/iconUser.js"}],"../src/pages/home/chatList/chat-list.component.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6517,21 +6977,31 @@ var home = new Home({
   components: [_chatField.chatField, _chatList.chatList]
 });
 exports.home = home;
-},{"../../framework/core/block":"../src/framework/core/block.js","../home/home.template":"../src/pages/home/home.template.js","./chatField/chat-field.component":"../src/pages/home/chatField/chat-field.component.js","./chatList/chat-list.component":"../src/pages/home/chatList/chat-list.component.js"}],"../src/app/app.component.js":[function(require,module,exports) {
+},{"../../framework/core/block":"../src/framework/core/block.js","../home/home.template":"../src/pages/home/home.template.js","./chatField/chat-field.component":"../src/pages/home/chatField/chat-field.component.js","./chatList/chat-list.component":"../src/pages/home/chatList/chat-list.component.js"}],"../src/pages/personal_account/personal-account.template.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.app = void 0;
+exports.personalAccountPageTemplate = void 0;
 
-var _block = require("../framework/core/block");
+var _avatar = _interopRequireDefault(require("../../assets/img/users__avatars/avatar-3.png"));
 
-var _app = require("./app.template");
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _navigation = require("../components/navigation/navigation.component");
+var personalAccountPageTemplate = "<div class=\"personal-account\">\n    <div class=\"personal-account__form\">\n        <div class=\"item__avatar-wrp\">\n            <img src=\"".concat(_avatar.default, "\" alt=\"avatar\">\n        </div>\n        <span class=\"form__name\">\u0413\u0440\u0438\u0433\u043E\u0440\u0438\u0439</span>\n        <div class=\"form__inputs\">\n            <div class=\"inputs__input-block\">\n                <span class=\"input-block__label\">\u041F\u043E\u0447\u0442\u0430</span>\n                <input class=\"input-block__input\" value=\"mikigrigorij@yandex.ru\" type=\"text\">\n            </div>\n            <div class=\"inputs__input-block\">\n                <span class=\"input-block__label\">\u041B\u043E\u0433\u0438\u043D</span>\n                <input class=\"input-block__input\" value=\"GrigoRASH\" type=\"text\">\n            </div>\n            <div class=\"inputs__input-block\">\n                <span class=\"input-block__label\">\u0418\u043C\u044F</span>\n                <input class=\"input-block__input\" value=\"\u0413\u0440\u0438\u0433\u043E\u0440\u0438\u0439\" type=\"text\">\n            </div>\n            <div class=\"inputs__input-block\">\n                <span class=\"input-block__label\">\u0424\u0430\u043C\u0438\u043B\u0438\u044F</span>\n                <input class=\"input-block__input\" value=\"\u041C\u0438\u043A\u0438\u0440\u0442\u0443\u043C\u043E\u0432\" type=\"text\">\n            </div>\n            <div class=\"inputs__input-block\">\n                <span class=\"input-block__label\">\u0418\u043C\u044F \u0432 \u0447\u0430\u0442\u0435</span>\n                <input class=\"input-block__input\" value=\"\u0413\u0440\u0438\u0433\u043E\u0440\u0438\u0439\" type=\"text\">\n            </div>\n            <div class=\"inputs__input-block\">\n                <span class=\"input-block__label\">\u0422\u0435\u043B\u0435\u0444\u043E\u043D</span>\n                <input class=\"input-block__input\" value=\"+7 (916) 821 55 27\" type=\"text\">\n            </div>\n        </div>\n        <!-- <button class=\"btn form__save-btn\">\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C</button> -->\n        <div class=\"form__bottom-block\">\n            <div class=\"inputs__input-block\">\n                <button class=\"input-block__label\">\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u0434\u0430\u043D\u043D\u044B\u0435</button>\n            </div>\n            <div class=\"inputs__input-block\">\n                <button class=\"input-block__label\">\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u043F\u0430\u0440\u043E\u043B\u044C</button>\n            </div>\n            <div class=\"form__logout-btn\">\n                <a class=\"router-link\" href=\"/login\">\u0412\u044B\u0439\u0442\u0438</a>\n            </div>\n        </div>\n    </div>\n</div>");
+exports.personalAccountPageTemplate = personalAccountPageTemplate;
+},{"../../assets/img/users__avatars/avatar-3.png":"../src/assets/img/users__avatars/avatar-3.png"}],"../src/pages/personal_account/personal-account.component.js":[function(require,module,exports) {
+"use strict";
 
-var _home = require("../pages/home/home.component");
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.personalAccount = void 0;
+
+var _block = require("../../framework/core/block");
+
+var _personalAccount = require("./personal-account.template");
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -6551,32 +7021,184 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var App = /*#__PURE__*/function (_Block) {
-  _inherits(App, _Block);
+var PersonalAccount = /*#__PURE__*/function (_Block) {
+  _inherits(PersonalAccount, _Block);
 
-  var _super = _createSuper(App);
+  var _super = _createSuper(PersonalAccount);
 
-  function App(props) {
-    _classCallCheck(this, App);
+  function PersonalAccount(props) {
+    _classCallCheck(this, PersonalAccount);
 
     return _super.call(this, props);
   }
 
-  return App;
+  return PersonalAccount;
 }(_block.Block);
 
-var app = new App({
-  selector: 'app',
-  template: _app.appTemplate,
-  components: [_navigation.navigation, _home.home]
+var personalAccount = new PersonalAccount({
+  selector: 'personal-account',
+  template: _personalAccount.personalAccountPageTemplate
 });
-exports.app = app;
-},{"../framework/core/block":"../src/framework/core/block.js","./app.template":"../src/app/app.template.js","../components/navigation/navigation.component":"../src/components/navigation/navigation.component.js","../pages/home/home.component":"../src/pages/home/home.component.js"}],"../src/assets/style/style.scss":[function(require,module,exports) {
-var reloadCSS = require('_css_loader');
+exports.personalAccount = personalAccount;
+},{"../../framework/core/block":"../src/framework/core/block.js","./personal-account.template":"../src/pages/personal_account/personal-account.template.js"}],"../src/pages/505/error-page.template.js":[function(require,module,exports) {
+"use strict";
 
-module.hot.dispose(reloadCSS);
-module.hot.accept(reloadCSS);
-},{"./..\\fonts\\Roboto-Bold\\Roboto-Bold.woff":[["Roboto-Bold.4d3922c1.woff","../src/assets/fonts/Roboto-Bold/Roboto-Bold.woff"],"../src/assets/fonts/Roboto-Bold/Roboto-Bold.woff"],"./..\\fonts\\Roboto-Bold\\Roboto-Bold.woff2":[["Roboto-Bold.ebd2841f.woff2","../src/assets/fonts/Roboto-Bold/Roboto-Bold.woff2"],"../src/assets/fonts/Roboto-Bold/Roboto-Bold.woff2"],"./..\\fonts\\Roboto-Light\\Roboto-Light.woff2":[["Roboto-Light.d443a849.woff2","../src/assets/fonts/Roboto-Light/Roboto-Light.woff2"],"../src/assets/fonts/Roboto-Light/Roboto-Light.woff2"],"./..\\fonts\\Roboto-Light\\Roboto-Light.woff":[["Roboto-Light.6ae336a8.woff","../src/assets/fonts/Roboto-Light/Roboto-Light.woff"],"../src/assets/fonts/Roboto-Light/Roboto-Light.woff"],"./..\\fonts\\Roboto-Regular\\Roboto-Regular.woff":[["Roboto-Regular.e5ddcf2f.woff","../src/assets/fonts/Roboto-Regular/Roboto-Regular.woff"],"../src/assets/fonts/Roboto-Regular/Roboto-Regular.woff"],"./..\\fonts\\Roboto-Regular\\Roboto-Regular.woff2":[["Roboto-Regular.9cc46bf3.woff2","../src/assets/fonts/Roboto-Regular/Roboto-Regular.woff2"],"../src/assets/fonts/Roboto-Regular/Roboto-Regular.woff2"],"./..\\fonts\\Gilroy\\Gilroy-Regular\\Gilroy-Regular.woff":[["Gilroy-Regular.387e0631.woff","../src/assets/fonts/Gilroy/Gilroy-Regular/Gilroy-Regular.woff"],"../src/assets/fonts/Gilroy/Gilroy-Regular/Gilroy-Regular.woff"],"./..\\fonts\\Gilroy\\Gilroy-Regular\\Gilroy-Regular.woff2":[["Gilroy-Regular.d499de7f.woff2","../src/assets/fonts/Gilroy/Gilroy-Regular/Gilroy-Regular.woff2"],"../src/assets/fonts/Gilroy/Gilroy-Regular/Gilroy-Regular.woff2"],"./..\\fonts\\Gilroy\\Gilroy-Bold\\Gilroy-Bold.woff":[["Gilroy-Bold.7374c6dd.woff","../src/assets/fonts/Gilroy/Gilroy-Bold/Gilroy-Bold.woff"],"../src/assets/fonts/Gilroy/Gilroy-Bold/Gilroy-Bold.woff"],"./..\\fonts\\Gilroy\\Gilroy-Bold\\Gilroy-Bold.woff2":[["Gilroy-Bold.46eee50f.woff2","../src/assets/fonts/Gilroy/Gilroy-Bold/Gilroy-Bold.woff2"],"../src/assets/fonts/Gilroy/Gilroy-Bold/Gilroy-Bold.woff2"],"./..\\fonts\\ProximaNova-Regular\\ProximaNova-Regular.woff":[["ProximaNova-Regular.9a349c66.woff","../src/assets/fonts/ProximaNova-Regular/ProximaNova-Regular.woff"],"../src/assets/fonts/ProximaNova-Regular/ProximaNova-Regular.woff"],"./..\\fonts\\ProximaNova-Regular\\ProximaNova-Regular.woff2":[["ProximaNova-Regular.92069095.woff2","../src/assets/fonts/ProximaNova-Regular/ProximaNova-Regular.woff2"],"../src/assets/fonts/ProximaNova-Regular/ProximaNova-Regular.woff2"],"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/index.js":[function(require,module,exports) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.errorPageTemplate = void 0;
+var errorPageTemplate = "<div class=\"page-warning\">\n    <div class=\"page-warning__warning\">\n        <h2 class=\"warning__title\">505</h2>\n        <span class=\"warning__text\">\u041C\u044B \u0443\u0436\u0435 \u0444\u0438\u043A\u0441\u0438\u043C</span>\n        <a href=\"/\" class=\"router-link warning__link\">\u041D\u0430\u0437\u0430\u0434 \u043A \u0447\u0430\u0442\u0430\u043C</a>\n    </div>\n</div>";
+exports.errorPageTemplate = errorPageTemplate;
+},{}],"../src/pages/505/error-page.component.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.errorPage = void 0;
+
+var _block = require("../../framework/core/block");
+
+var _errorPage = require("./error-page.template");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var ErrorPage = /*#__PURE__*/function (_Block) {
+  _inherits(ErrorPage, _Block);
+
+  var _super = _createSuper(ErrorPage);
+
+  function ErrorPage(props) {
+    _classCallCheck(this, ErrorPage);
+
+    return _super.call(this, props);
+  }
+
+  return ErrorPage;
+}(_block.Block);
+
+var errorPage = new ErrorPage({
+  template: _errorPage.errorPageTemplate
+});
+exports.errorPage = errorPage;
+},{"../../framework/core/block":"../src/framework/core/block.js","./error-page.template":"../src/pages/505/error-page.template.js"}],"../src/pages/404/not-found-page.template.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.notFoundPageTemplate = void 0;
+var notFoundPageTemplate = "<div class=\"page-warning\">\n    <div class=\"page-warning__warning\">\n        <h2 class=\"warning__title\">404</h2>\n        <span class=\"warning__text\">\u0421\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430</span>\n        <a href=\"/\" class=\"router-link warning__link\">\u041D\u0430\u0437\u0430\u0434 \u043A \u0447\u0430\u0442\u0430\u043C</a>\n    </div>\n</div>";
+exports.notFoundPageTemplate = notFoundPageTemplate;
+},{}],"../src/pages/404/not-found-page.component.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.notFoundPage = void 0;
+
+var _block = require("../../framework/core/block");
+
+var _notFoundPage = require("./not-found-page.template");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var NotFoundPage = /*#__PURE__*/function (_Block) {
+  _inherits(NotFoundPage, _Block);
+
+  var _super = _createSuper(NotFoundPage);
+
+  function NotFoundPage(props) {
+    _classCallCheck(this, NotFoundPage);
+
+    return _super.call(this, props);
+  }
+
+  return NotFoundPage;
+}(_block.Block);
+
+var notFoundPage = new NotFoundPage({
+  selector: 'not-found',
+  template: _notFoundPage.notFoundPageTemplate
+});
+exports.notFoundPage = notFoundPage;
+},{"../../framework/core/block":"../src/framework/core/block.js","./not-found-page.template":"../src/pages/404/not-found-page.template.js"}],"../src/router/routes.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.routes = void 0;
+
+var _login = require("../pages/login/login.component");
+
+var _registration = require("../pages/registration/registration.component");
+
+var _home = require("../pages/home/home.component");
+
+var _personalAccount = require("../pages/personal_account/personal-account.component");
+
+var _errorPage = require("../pages/505/error-page.component");
+
+var _notFoundPage = require("../pages/404/not-found-page.component");
+
+var routes = [{
+  path: '*',
+  redirect: '/404'
+}, {
+  path: '/',
+  component: _home.home
+}, {
+  path: '/login',
+  component: _login.loginPage
+}, {
+  path: '/registration',
+  component: _registration.registrationPage
+}, {
+  path: '/personal-account',
+  component: _personalAccount.personalAccount
+}, {
+  path: '/505',
+  component: _errorPage.errorPage
+}, {
+  path: '/404',
+  component: _notFoundPage.notFoundPage
+}];
+exports.routes = routes;
+},{"../pages/login/login.component":"../src/pages/login/login.component.js","../pages/registration/registration.component":"../src/pages/registration/registration.component.js","../pages/home/home.component":"../src/pages/home/home.component.js","../pages/personal_account/personal-account.component":"../src/pages/personal_account/personal-account.component.js","../pages/505/error-page.component":"../src/pages/505/error-page.component.js","../pages/404/not-found-page.component":"../src/pages/404/not-found-page.component.js"}],"../src/index.js":[function(require,module,exports) {
 "use strict";
 
 require("normalize.css");
@@ -6585,47 +7207,18 @@ var _app = require("./app/app.component");
 
 require("./assets/style/style.scss");
 
-// import Templator from './utils/templator/index.ts';
-// import RouterModule from './router/index.ts';
-// import { utils } from './utils/index.ts';
-// const entrySelector = '#app';
-// const router = new RouterModule('#main');
-// declare global {
-//   interface Window {
-//     utils;
-//   }
-// }
-// window.utils = utils || {};
-// const initApp = (point: string): void => {
-//   const tmpl = new Templator(app);
-//   const renderTemplate = tmpl.compile();
-//   //console.log(renderTemplate);
-//   document.querySelector(point).innerHTML = renderTemplate;
-//   router.init();
-// };
-// initApp(entrySelector);
-// class App extends Block {
-//   constructor(props) {
-//     super(props);
-//   }
-// }
-// const app = new App({
-//   data: {
-//     text: 'Страдание и боль (((',
-//     subText: 'Наше всё',
-//   },
-//   template: `
-//   <div class='test1'>
-//     <div class="test1.1">
-//       <span>Текст</span>
-//       <span>{{text}} {{subText}}</span>
-//       <div class="test1.1.1">
-//       </div>
-//     </div>
-//   </div>`,
-// });
+var _router = require("./framework/core/router");
+
+var _routes = require("./router/routes");
+
+var router = new _router.Router({
+  routes: _routes.routes
+});
+
 _app.app.init();
-},{"normalize.css":"../node_modules/normalize.css/normalize.css","./app/app.component":"../src/app/app.component.js","./assets/style/style.scss":"../src/assets/style/style.scss"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+
+router.init();
+},{"normalize.css":"../node_modules/normalize.css/normalize.css","./app/app.component":"../src/app/app.component.js","./assets/style/style.scss":"../src/assets/style/style.scss","./framework/core/router":"../src/framework/core/router.js","./router/routes":"../src/router/routes.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -6653,7 +7246,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56980" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58313" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -4,11 +4,9 @@ import range from './modules/range.ts';
 import rangeright from './modules/rangeright.ts';
 import isEmpty from './modules/isEmpty.ts';
 import get from './modules/get.ts';
-import renderDom from './renderDom';
 import { isUndefined } from './modules/isUndefined.ts';
 
 export const utils = {
-  renderDom,
   last,
   first,
   range,

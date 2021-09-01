@@ -1,10 +1,14 @@
-export default function get(obj, path, defaultValue) {
+export default function get(
+  object: any,
+  path: string,
+  defaultValue: any
+): unknown {
   if (typeof path !== 'string') {
     return;
   }
   const keys = path.split('.');
 
-  let result = obj;
+  let result = object;
   for (const key of keys) {
     result = result[key];
 

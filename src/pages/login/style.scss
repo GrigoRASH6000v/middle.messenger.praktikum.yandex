@@ -4,14 +4,19 @@
   justify-content: center;
   align-items: center;
 }
-.login__form{
+.login__form {
   @extend %form;
   max-height: 54rem;
-  .form__container{
+  .form__container {
     grid-template-rows: auto auto auto 1fr;
   }
-  .label--last{
-        margin-bottom: 8.6rem;
+  .label--last {
+    margin-bottom: 8.6rem;
   }
 }
-
+.no-valid {
+  border-bottom-color: red !important;
+}
+.valid {
+  border-bottom-color: green !important;
+}

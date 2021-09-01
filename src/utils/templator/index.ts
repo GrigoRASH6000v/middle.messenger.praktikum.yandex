@@ -20,7 +20,7 @@ class Templator {
     this._data = data;
   }
 
-  static TEMPLATE_REGEXP = /\{\{(.*?)\}\}/gi;
+  static TEMPLATE_REGEXP = /{{(.*?)}}/gi;
 
   public compile():string {
     return this._compileTemplate();

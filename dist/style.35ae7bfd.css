@@ -189,14 +189,9 @@ a {
 }
 
 .container {
-  overflow: hidden;
+  overflow-y: hidden;
   height: 100%;
   display: grid;
-  grid-template-columns: 8rem 1fr;
-}
-.container .main {
-  height: 100%;
-  overflow: hidden;
 }
 
 .login {
@@ -216,6 +211,14 @@ a {
   margin-bottom: 8.6rem;
 }
 
+.no-valid {
+  border-bottom-color: red !important;
+}
+
+.valid {
+  border-bottom-color: green !important;
+}
+
 .navigation {
   padding: 3rem 0;
   display: grid;
@@ -229,6 +232,10 @@ a {
   height: max-content;
   align-self: center;
 }
+.navigation .items-wrp i {
+  color: #7F80AA;
+  font-size: 2rem;
+}
 .navigation__item {
   width: 100%;
   display: flex;
@@ -240,8 +247,9 @@ a {
 .navigation .item-svg {
   fill: #7F80AA;
 }
-.navigation .item__logo {
-  fill: #0176FF;
+.navigation .logo-icon {
+  color: #0176FF;
+  font-size: 2rem;
 }
 .navigation__item--logo {
   align-self: flex-start;
@@ -250,6 +258,7 @@ a {
 .home {
   height: 100%;
   display: flex;
+  overflow: hidden;
 }
 
 .chat-list {
@@ -636,6 +645,9 @@ a {
   justify-content: center;
   align-items: center;
   height: 100%;
+}
+.registration .form__container {
+  row-gap: 2rem;
 }
 
 .registration__form {

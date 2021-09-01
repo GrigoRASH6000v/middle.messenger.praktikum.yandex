@@ -1,6 +1,8 @@
 import avatar1 from '../../../assets/img/users__avatars/avatar.png';
 import avatar2 from '../../../assets/img/users__avatars/avatar-2.png';
 
+import { iconUser } from '../../../components/ui/icons/iconUser';
+
 export const chatListTemplate = `
 <div class="chat-list">
     <h3 class="chat-list__title">Чаты</h3>
@@ -12,7 +14,6 @@ export const chatListTemplate = `
         <input class="input" type="text" placeholder="Поиск">
     </div>
     <button class="btn">
-        <iconPlusOutline/>
         <span>Создать чат</span>
     </button>
     <testComponents/>
