@@ -6208,9 +6208,9 @@ function () {
 
     if (children) {
       children.forEach(function (child) {
-        child.type === 3 ? nodeElement.textContent = child.text : null;
+        child.type === Block.BIND_TYPES.IS_TEXT ? nodeElement.textContent = child.text : null;
 
-        if (child.type === 2) {
+        if (child.type === Block.BIND_TYPES.IS_METHOD) {
           nodeElement.textContent = child.tokens.map(function (t) {
             return _this.data[t['@binding']];
           }).join(' ');
@@ -6237,6 +6237,11 @@ function () {
     return this.el;
   };
 
+  Block.BIND_TYPES = {
+    IS_BLOCK: 1,
+    IS_TEXT: 3,
+    IS_METHOD: 2
+  };
   Block.EVENTS = {
     FLOW_CDC: 'flow:component-did-created',
     FLOW_CDM: 'flow:component-did-mount',
@@ -6809,7 +6814,7 @@ var _avatar2 = _interopRequireDefault(require("../../../assets/img/users__avatar
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var chatFieldTemplate = "<div class=\"chat-field\">\n    <div class=\"chat-field__header\">\n        <div class=\"header__chat-info\">\n            <div class=\"item__avatar-wrp\">\n                <img src=\"".concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"chat-info__name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n            <span class=\"chat-info__status\">online</span>\n        </div>\n        <iconUserAdd />\n        <iconDotes />\n    </div>\n    <div class=\"chat-field__body\">\n        <div class=\"body__item body__item--incoming\" v-for=\"maessage of chatList\" :key=\"maessage.id\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <span class=\"text__name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n        <!-- <div class=\"body__item body__item--outgoing\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar2.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n        <div class=\"body__item body__item--incoming\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <span class=\"text__name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n        <div class=\"body__item body__item--outgoing\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar2.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n        <div class=\"body__item body__item--incoming\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <span class=\"text__name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n        <div class=\"body__item body__item--outgoing\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar2.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div> -->\n    </div>\n</div>");
+var chatFieldTemplate = "<div class=\"chat-field\">\n    <div class=\"chat-field__header\">\n        <div class=\"header__chat-info\">\n            <div class=\"item__avatar-wrp\">\n                <img src=\"".concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <span class=\"chat-info__name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n            <span class=\"chat-info__status\">online</span>\n        </div>\n        <iconUserAdd />\n        <iconDotes />\n    </div>\n    <div class=\"chat-field__body\">\n        <div class=\"body__item body__item--incoming\" v-for=\"maessage of chatList\" :key=\"maessage.id\">\n            <div class=\"item__avatar-wrp item__avatar-wrp--body\">\n                <img src=\"").concat(_avatar.default, "\" alt=\"avatar\">\n            </div>\n            <div class=\"item__text\">\n                <span class=\"text__name\">\u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u041C\u0430\u043A\u0430\u0440\u043E\u0432\u0430</span>\n                <p class=\"text__cintent\">\n                    Lorem ipsum dolor sit amet consectetur adipisicing elit.\n                    Vel, fugiat. Nihil, laudantium maiores expedita dolor velit\n                    adipisci doloribus tenetur assumenda rerum ducimus\n                    unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.\n                </p>\n                <span class=\"text__last-date\">8 \u043C\u0438\u043D\u0443\u0442 \u043D\u0430\u0437\u0430\u0434</span>\n            </div>\n        </div>\n    </div>\n</div>");
 exports.chatFieldTemplate = chatFieldTemplate;
 },{"../../../assets/img/users__avatars/avatar.png":"../src/assets/img/users__avatars/avatar.png","../../../assets/img/users__avatars/avatar-3.png":"../src/assets/img/users__avatars/avatar-3.png"}],"../src/pages/home/chatField/chat-field.component.ts":[function(require,module,exports) {
 "use strict";
@@ -7326,7 +7331,114 @@ var routes = [{
   component: not_found_page_component_1.notFoundPage
 }];
 exports.default = routes;
-},{"../pages/login/login.component":"../src/pages/login/login.component.ts","../pages/registration/registration.component":"../src/pages/registration/registration.component.ts","../pages/home/home.component":"../src/pages/home/home.component.ts","../pages/personal_account/personal-account.component":"../src/pages/personal_account/personal-account.component.ts","../pages/505/error-page.component":"../src/pages/505/error-page.component.ts","../pages/404/not-found-page.component":"../src/pages/404/not-found-page.component.ts"}],"../src/index.ts":[function(require,module,exports) {
+},{"../pages/login/login.component":"../src/pages/login/login.component.ts","../pages/registration/registration.component":"../src/pages/registration/registration.component.ts","../pages/home/home.component":"../src/pages/home/home.component.ts","../pages/personal_account/personal-account.component":"../src/pages/personal_account/personal-account.component.ts","../pages/505/error-page.component":"../src/pages/505/error-page.component.ts","../pages/404/not-found-page.component":"../src/pages/404/not-found-page.component.ts"}],"../src/framework/core/fetch.ts":[function(require,module,exports) {
+"use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.fetchHTTP = void 0;
+
+var isEmpty_1 = __importDefault(require("../../utils/modules/isEmpty"));
+
+var METHODS;
+
+(function (METHODS) {
+  METHODS["GET"] = "GET";
+  METHODS["POST"] = "POST";
+  METHODS["PUT"] = "PUT";
+  METHODS["DELETE"] = "DELETE";
+})(METHODS || (METHODS = {}));
+
+function queryStringify(data) {
+  var query = '';
+
+  for (var key in data) {
+    if (query) {
+      query += '&';
+    } else {
+      query += '?';
+    }
+
+    query += key + "=" + data[key];
+  }
+
+  return query;
+}
+
+function setHeaders(xhr, headers) {
+  for (var key in headers) {
+    xhr.setRequestHeader(key, headers[key]);
+  }
+
+  return xhr;
+}
+
+var HTTPTransport =
+/** @class */
+function () {
+  function HTTPTransport(url, options, method) {
+    var _this = this;
+
+    this.init = function () {
+      return _this.request(_this.url, _this.options, _this.method);
+    };
+
+    this.url = url, this.options = options, this.method = method;
+  }
+
+  HTTPTransport.prototype.request = function (url, options, method) {
+    return new Promise(function (resolve, reject) {
+      if (options && !isEmpty_1.default(options) && method === 'GET') {
+        url += queryStringify(options.data);
+      }
+
+      var xhr = new XMLHttpRequest();
+      xhr.open(method, url);
+      if (options && options.headers) xhr = setHeaders(xhr, options.headers);
+      xhr.addEventListener('load', function () {
+        resolve(xhr);
+      });
+
+      var handleError = function handleError(error) {
+        return error;
+      };
+
+      xhr.addEventListener('abort', reject);
+      xhr.addEventListener('error', handleError);
+      xhr.ontimeout = reject;
+      if (method === METHODS.GET || method === METHODS.DELETE) xhr.send();
+
+      if (method === METHODS.POST || method === METHODS.PUT) {
+        if (options && options.data) xhr.send(JSON.stringify(options.data));
+      }
+    });
+  };
+
+  return HTTPTransport;
+}();
+
+exports.fetchHTTP = {
+  get: function get(url, options) {
+    return new HTTPTransport(url, options, 'GET').init();
+  },
+  post: function post(url, options) {
+    return new HTTPTransport(url, options, 'POST').init();
+  },
+  delite: function delite(url, options) {
+    return new HTTPTransport(url, options, 'DELETE').init();
+  },
+  put: function put(url, options) {
+    return new HTTPTransport(url, options, 'DELETE').init();
+  }
+};
+},{"../../utils/modules/isEmpty":"../src/utils/modules/isEmpty.ts"}],"../src/index.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -7349,12 +7461,17 @@ var router_ts_1 = __importDefault(require("./framework/core/router.ts"));
 
 var routes_ts_1 = __importDefault(require("./router/routes.ts"));
 
+var fetch_1 = require("./framework/core/fetch");
+
+fetch_1.fetchHTTP.get('https://jsonplaceholder.typicode.com/todos/1').then(function (res) {
+  return console.log(res.response);
+});
 var router = new router_ts_1.default({
   routes: routes_ts_1.default
 });
 app_component_ts_1.app.init();
 router.init();
-},{"normalize.css":"../node_modules/normalize.css/normalize.css","./app/app.component.ts":"../src/app/app.component.ts","./assets/style/style.scss":"../src/assets/style/style.scss","./framework/core/router.ts":"../src/framework/core/router.ts","./router/routes.ts":"../src/router/routes.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"normalize.css":"../node_modules/normalize.css/normalize.css","./app/app.component.ts":"../src/app/app.component.ts","./assets/style/style.scss":"../src/assets/style/style.scss","./framework/core/router.ts":"../src/framework/core/router.ts","./router/routes.ts":"../src/router/routes.ts","./framework/core/fetch":"../src/framework/core/fetch.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -7382,7 +7499,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59683" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57308" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

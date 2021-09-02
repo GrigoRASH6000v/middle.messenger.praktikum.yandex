@@ -1,3 +1,4 @@
+import isEmpty from "../../utils/modules/isEmpty";
 enum METHODS {
   GET = 'GET',
   POST = 'POST',
@@ -7,7 +8,6 @@ enum METHODS {
 
 interface Options {
   retries?: number;
-  method?: METHODS;
   data?: { [key: string]: unknown };
   headers?: { [key: string]: string };
 }
@@ -33,74 +33,47 @@ function setHeaders(xhr: XMLHttpRequest, headers: { [key: string]: string }) {
 }
 
 class HTTPTransport {
-  get = (url: string, options: Options) =>
-    this.request(url, { ...options, method: METHODS.GET });
-
-  post = (url: string, options: Options) => {
-    options = options.headers
-      ? options
-      : {
-          data: options,
-          headers: { 'Content-type': 'application/json; charset=UTF-8' },
-        };
-    return this.request(url, { ...options, method: METHODS.POST });
-  };
-
-  put = (url: string, options: Options) => {
-    options = options.headers
-      ? options
-      : {
-          data: options,
-          headers: { 'Content-type': 'application/json; charset=UTF-8' },
-        };
-    return this.request(url, { ...options, method: METHODS.PUT });
-  };
-
-  delete = (url: string, options: Options) => {
-    options = options.headers
-      ? options
-      : {
-          data: options,
-          headers: { 'Content-type': 'application/json; charset=UTF-8' },
-        };
-    return this.request(url, { ...options, method: METHODS.DELETE });
-  };
-
-  request = (url: string, options: Options) =>
-    new Promise((resolve, reject) => {
-      let xhr = new XMLHttpRequest();
-      url =
-        options.method === METHODS.GET
-          ? options.data
-            ? (url += queryStringify(options.data))
-            : url
-          : url;
-      xhr.open(options.method, url);
-      xhr = setHeaders(xhr, options.headers);
+  public url: string;
+  public options: { [key: string]: unknown };
+  public method: string;
+  constructor(
+    url: string,
+    options: { [key: string]: unknown },
+    method: string
+  ) {
+    (this.url = url), (this.options = options), (this.method = method);
+  }
+  init = () => this.request(this.url, this.options, this.method);
+  request(url: string, options: Options, method: string){
+     return new Promise((resolve, reject) =>{
+       if(options && !isEmpty(options) && method==='GET'){
+         url+=queryStringify(options.data)
+       }
+       let xhr = new XMLHttpRequest();
+       xhr.open(method, url);
+      if(options && options.headers) xhr = setHeaders(xhr, options.headers)
       xhr.addEventListener('load', () => {
         resolve(xhr);
       });
-      const handleError = (error: object) => {
-        console.error(error);
-      };
+      const handleError = (error: unknown) => error;
       xhr.addEventListener('abort', reject);
       xhr.addEventListener('error', handleError);
       xhr.ontimeout = reject;
-      if (options.method === METHODS.GET || options.method === METHODS.DELETE)
+      if (method === METHODS.GET || method === METHODS.DELETE)
         xhr.send();
-      if (options.method === METHODS.POST || options.method === METHODS.PUT) {
-        xhr.send(JSON.stringify(options.data));
+       if (method === METHODS.POST || method === METHODS.PUT) {
+        if(options && options.data) xhr.send(JSON.stringify(options.data));
       }
-    });
+    }
+  }
 }
 
-export const fetchHTTP: { [key: string]: () => unknown } = {
+export const fetchHTTP: { [key: string]: (url: string, options: Options) => Promise<unknown> } = {
   get: (url: string, options: Options) =>
-    new HTTPTransport().get(url, options).then((res) => res),
+    new HTTPTransport(url, options, 'GET').init(),
   post: (url: string, options: Options) =>
-    new HTTPTransport().post(url, options).then((res) => res),
+  new HTTPTransport(url, options, 'POST').init(),
   delite: (url: string, options: Options) =>
-    new HTTPTransport().delete(url, options).then((res) => res),
-  put: (url: string, options: Options) =>
-    new HTTPTransport().put(url, options).then((res) => res),
+  new HTTPTransport(url, options, 'DELETE').init(),
+  put: (url: string, options: Options) =>  new HTTPTransport(url, options, 'DELETE').init(),
 };

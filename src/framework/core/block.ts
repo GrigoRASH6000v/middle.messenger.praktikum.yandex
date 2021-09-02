@@ -12,6 +12,11 @@ interface Properties {
 }
 
 export abstract class Block {
+  static BIND_TYPES = {
+    IS_BLOCK: 1,
+    IS_TEXT: 3,
+    IS_METHOD: 2,
+  };
   static EVENTS = {
     FLOW_CDC: 'flow:component-did-created',
     FLOW_CDM: 'flow:component-did-mount',
@@ -145,10 +150,12 @@ export abstract class Block {
 
     if (children) {
       children.forEach((child: { [key: string]: unknown }) => {
-        child.type === 3 ? (nodeElement.textContent = child.text) : null;
-        if (child.type === 2) {
+        child.type === Block.BIND_TYPES.IS_TEXT
+          ? (nodeElement.textContent = child.text)
+          : null;
+        if (child.type === Block.BIND_TYPES.IS_METHOD) {
           nodeElement.textContent = child.tokens
-            .map((t: any) => this.data[t['@binding']])
+            .map((t: unknown) => this.data[t['@binding']])
             .join(' ');
         }
       });
