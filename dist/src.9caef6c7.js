@@ -7331,114 +7331,7 @@ var routes = [{
   component: not_found_page_component_1.notFoundPage
 }];
 exports.default = routes;
-},{"../pages/login/login.component":"../src/pages/login/login.component.ts","../pages/registration/registration.component":"../src/pages/registration/registration.component.ts","../pages/home/home.component":"../src/pages/home/home.component.ts","../pages/personal_account/personal-account.component":"../src/pages/personal_account/personal-account.component.ts","../pages/505/error-page.component":"../src/pages/505/error-page.component.ts","../pages/404/not-found-page.component":"../src/pages/404/not-found-page.component.ts"}],"../src/framework/core/fetch.ts":[function(require,module,exports) {
-"use strict";
-
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.fetchHTTP = void 0;
-
-var isEmpty_1 = __importDefault(require("../../utils/modules/isEmpty"));
-
-var METHODS;
-
-(function (METHODS) {
-  METHODS["GET"] = "GET";
-  METHODS["POST"] = "POST";
-  METHODS["PUT"] = "PUT";
-  METHODS["DELETE"] = "DELETE";
-})(METHODS || (METHODS = {}));
-
-function queryStringify(data) {
-  var query = '';
-
-  for (var key in data) {
-    if (query) {
-      query += '&';
-    } else {
-      query += '?';
-    }
-
-    query += key + "=" + data[key];
-  }
-
-  return query;
-}
-
-function setHeaders(xhr, headers) {
-  for (var key in headers) {
-    xhr.setRequestHeader(key, headers[key]);
-  }
-
-  return xhr;
-}
-
-var HTTPTransport =
-/** @class */
-function () {
-  function HTTPTransport(url, options, method) {
-    var _this = this;
-
-    this.init = function () {
-      return _this.request(_this.url, _this.options, _this.method);
-    };
-
-    this.url = url, this.options = options, this.method = method;
-  }
-
-  HTTPTransport.prototype.request = function (url, options, method) {
-    return new Promise(function (resolve, reject) {
-      if (options && !isEmpty_1.default(options) && method === 'GET') {
-        url += queryStringify(options.data);
-      }
-
-      var xhr = new XMLHttpRequest();
-      xhr.open(method, url);
-      if (options && options.headers) xhr = setHeaders(xhr, options.headers);
-      xhr.addEventListener('load', function () {
-        resolve(xhr);
-      });
-
-      var handleError = function handleError(error) {
-        return error;
-      };
-
-      xhr.addEventListener('abort', reject);
-      xhr.addEventListener('error', handleError);
-      xhr.ontimeout = reject;
-      if (method === METHODS.GET || method === METHODS.DELETE) xhr.send();
-
-      if (method === METHODS.POST || method === METHODS.PUT) {
-        if (options && options.data) xhr.send(JSON.stringify(options.data));
-      }
-    });
-  };
-
-  return HTTPTransport;
-}();
-
-exports.fetchHTTP = {
-  get: function get(url, options) {
-    return new HTTPTransport(url, options, 'GET').init();
-  },
-  post: function post(url, options) {
-    return new HTTPTransport(url, options, 'POST').init();
-  },
-  delite: function delite(url, options) {
-    return new HTTPTransport(url, options, 'DELETE').init();
-  },
-  put: function put(url, options) {
-    return new HTTPTransport(url, options, 'DELETE').init();
-  }
-};
-},{"../../utils/modules/isEmpty":"../src/utils/modules/isEmpty.ts"}],"../src/index.ts":[function(require,module,exports) {
+},{"../pages/login/login.component":"../src/pages/login/login.component.ts","../pages/registration/registration.component":"../src/pages/registration/registration.component.ts","../pages/home/home.component":"../src/pages/home/home.component.ts","../pages/personal_account/personal-account.component":"../src/pages/personal_account/personal-account.component.ts","../pages/505/error-page.component":"../src/pages/505/error-page.component.ts","../pages/404/not-found-page.component":"../src/pages/404/not-found-page.component.ts"}],"../src/index.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -7461,17 +7354,12 @@ var router_ts_1 = __importDefault(require("./framework/core/router.ts"));
 
 var routes_ts_1 = __importDefault(require("./router/routes.ts"));
 
-var fetch_1 = require("./framework/core/fetch");
-
-fetch_1.fetchHTTP.get('https://jsonplaceholder.typicode.com/todos/1').then(function (res) {
-  return console.log(res.response);
-});
 var router = new router_ts_1.default({
   routes: routes_ts_1.default
 });
 app_component_ts_1.app.init();
 router.init();
-},{"normalize.css":"../node_modules/normalize.css/normalize.css","./app/app.component.ts":"../src/app/app.component.ts","./assets/style/style.scss":"../src/assets/style/style.scss","./framework/core/router.ts":"../src/framework/core/router.ts","./router/routes.ts":"../src/router/routes.ts","./framework/core/fetch":"../src/framework/core/fetch.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"normalize.css":"../node_modules/normalize.css/normalize.css","./app/app.component.ts":"../src/app/app.component.ts","./assets/style/style.scss":"../src/assets/style/style.scss","./framework/core/router.ts":"../src/framework/core/router.ts","./router/routes.ts":"../src/router/routes.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
