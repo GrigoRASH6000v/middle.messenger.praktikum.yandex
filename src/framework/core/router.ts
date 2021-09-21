@@ -1,5 +1,3 @@
-import { Block } from './block';
-
 interface Route {
   path: string;
   component: unknown;
