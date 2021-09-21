@@ -1,14 +1,11 @@
-#app {
+.app {
   height: 100vh;
   width: 100%;
-}
-.container {
-  overflow: hidden;
-  height: 100%;
   display: grid;
   grid-template-columns: 8rem 1fr;
-  .main {
-    height: 100%;
-    overflow: hidden;
-  }
+}
+.container {
+  overflow-y: hidden;
+  height: 100%;
+  display: grid;
 }

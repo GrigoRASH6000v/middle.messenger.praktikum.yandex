@@ -9,6 +9,10 @@
     flex-wrap: wrap;
     height: max-content;
     align-self: center;
+    i {
+      color: $brand-clr-2;
+      font-size: 2rem;
+    }
   }
   &__item {
     width: 100%;
@@ -21,8 +25,9 @@
   .item-svg {
     fill: $brand-clr-2;
   }
-  .item__logo {
-    fill: $brand-clr-1;
+  .logo-icon {
+    color: $brand-clr-1;
+    font-size: 2rem;
   }
   &__item--logo {
     align-self: flex-start;

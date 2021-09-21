@@ -5,14 +5,8 @@
     font-size: 1.6rem;
     padding: .9rem 0;
 }
-
-.input--border-botoom{
+.input--border-bottom{
     border: none;
-    border-bottom: 1px solid $grey-clr;
+    border-bottom: 1px solid $brand-clr-1;
 }
 
-.label{
-    font-size: 1.2rem;
-    font-family: 'Gilroy-Regular';
-    color: $text-clr-3;
-}
