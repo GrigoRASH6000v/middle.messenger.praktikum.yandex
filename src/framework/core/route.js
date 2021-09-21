@@ -22,7 +22,7 @@ class Route {
       this._block.hide();
     }
   }
-  //test22
+  //test222
   match(pathname) {
     return isEqual(pathname, this._pathname);
   }
