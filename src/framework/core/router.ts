@@ -1,3 +1,5 @@
+import { store } from '../../store/index';
+
 interface Route {
   path: string;
   component: unknown;
@@ -5,14 +7,24 @@ interface Route {
 }
 
 class Router {
-  public routes: Route[];
+  private pageLinks: HTMLElement[];
+  public currentComponent: {
+    path: string;
+    redirect?: string;
+    component?: unknown;
+  } | null;
+  public history: { [key: string]: unknown };
+  public linkClass;
+  public routes;
   public selector: string;
   public pathNotFound: string;
   public entryPoint: HTMLElement | null;
   public currentPath: string | null;
-  constructor(params: { routes: Route[] }) {
+  constructor(params: { routes: Route[]; linkClass: string }) {
+    this.history = window.history;
+    this.pageLinks = [];
     this.routes = params.routes;
-
+    this.linkClass = params.linkClass;
     this.selector = 'router-view';
 
     this.pathNotFound = '*';
@@ -20,6 +32,8 @@ class Router {
     this.entryPoint = null;
 
     this.currentPath = null;
+
+    this.currentComponent = null;
   }
 
   find(path: string): Route {
@@ -32,17 +46,22 @@ class Router {
   }
 
   mountComponent(path: string): void {
+    if (!store.state.authenticated && path !== '/sign-up') {
+      path = '/login';
+    }
     if (this.currentPath !== path) {
       const content = this.entryPoint.firstChild;
       if (content) content.remove();
       this.currentPath = path;
-      const currentComponent = this.find(this.currentPath);
+      this.currentComponent = this.find(this.currentPath);
+
       const recource = this.createResources(
-        currentComponent.component.selector
+        this.currentComponent.component.selector
       );
       this.entryPoint.append(recource);
-      currentComponent.component.init();
-      this.setLocation(path);
+      this.currentComponent.component.init();
+      this.setLocation(this.currentComponent.path);
+      this.initListeners();
     }
   }
 
@@ -54,21 +73,34 @@ class Router {
     this.entryPoint = document.querySelector(this.selector);
     this.mountComponent(window.location.pathname);
     this.initListeners();
+    this.subscribeWindowChange();
   }
-
+  subscribeWindowChange() {
+    window.onpopstate = ((event) => {
+      this.mountComponent(event.currentTarget.location.pathname);
+    }).bind(this);
+  }
   initListeners(): void {
+    this.pageLinks = document.querySelectorAll(`.${this.linkClass}`);
     const callback = (event: any): void => {
       event.preventDefault();
-      if (event.target.tagName === 'A') {
-        return this.mountComponent(event.target.pathname);
-      }
-      if (event.target.parentNode.tagName === 'A') {
-        return this.mountComponent(event.target.parentNode.pathname);
-      }
+      event.stopPropagation();
+      this.mountComponent(event.currentTarget.pathname);
     };
-    document.addEventListener('click', callback, false);
+    this.pageLinks.forEach((link) =>
+      link.addEventListener('click', callback, false)
+    );
+  }
+  back() {
+    this.history.back();
   }
 
+  forward() {
+    this.history.forward();
+  }
+  navigation(path) {
+    this.mountComponent(path);
+  }
   public setLocation(path: string): void {
     window.history.pushState(null, null, path);
   }

@@ -1,5 +1,6 @@
-import { EventBus } from './ebent-bus.ts';
+import { EventBus } from './ebent-bus';
 import isEmpty from '../../utils/modules/isEmpty';
+import { utils } from '../../utils';
 
 const templator = require('vue-template-compiler');
 
@@ -50,6 +51,7 @@ export abstract class Block {
   }
 
   init(): void {
+    this._binding();
     this.eventBus.emit(Block.EVENTS.FLOW_CDC);
   }
 
@@ -66,7 +68,11 @@ export abstract class Block {
       this.eventBus.emit(Block.EVENTS.FLOW_CDM);
     }
   }
-
+  _binding() {
+    for (let key in this.methods) {
+      this.methods[key].bind(this);
+    }
+  }
   _update(): void {
     this.update();
   }
@@ -122,12 +128,11 @@ export abstract class Block {
     this.el = this._createDocumentElement(compiled.ast);
   }
 
-  _createDocumentElement(object: {
-    [key: string]: unknown;
-  }): HTMLElement | undefined {
+  _createDocumentElement(object, data = this.data) {
     if (!object.children) return;
-    const { children } = object;
     const nodeElement = document.createElement(object.tag);
+    let vFor = false;
+    let fragment = null;
     if (!isEmpty(object.attrsMap)) {
       const attrs = object.attrsMap;
       for (const key in attrs) {
@@ -142,34 +147,60 @@ export abstract class Block {
               this.setProps(attrs[key], nodeElement.value);
             });
           }
+        } else if (key === 'v-for') {
+          let item = attrs[key].split('of')[0].trim();
+          let list = attrs[key].split('of')[1].trim();
+          let dataList = this.data[list];
+          vFor = dataList;
         } else {
           this._setAttrs(nodeElement, key, attrs[key]);
         }
       }
     }
-
-    if (children) {
-      children.forEach((child: { [key: string]: unknown }) => {
+    if (object.children) {
+      object.children.forEach((child: { [key: string]: unknown }) => {
         child.type === Block.BIND_TYPES.IS_TEXT
           ? (nodeElement.textContent = child.text)
           : null;
         if (child.type === Block.BIND_TYPES.IS_METHOD) {
           nodeElement.textContent = child.tokens
-            .map((t: unknown) => this.data[t['@binding']])
+            .map((t: unknown) => data[t['@binding']])
             .join(' ');
         }
       });
     }
-    for (const key in children) {
-      const child = this._createDocumentElement(children[key]);
-      if (child) {
-        nodeElement.append(child);
+
+    if (object.children) {
+      if (object.type === Block.BIND_TYPES.IS_TEXT) {
+        nodeElement.textContent = object.text;
       }
+      object.children.forEach((el) => {
+        let child = this._createDocumentElement(el);
+        if (child) {
+          nodeElement.appendChild(child);
+        }
+      });
     }
+    if (vFor) {
+      fragment = document.createDocumentFragment();
+      vFor.forEach((element) => {
+        let cloneNode = nodeElement.cloneNode(true);
+        fragment.appendChild(cloneNode);
+      });
+      return fragment;
+    }
+
     return nodeElement;
   }
   _setAttrs(element: HTMLElement, key: unknown, value: unknown): void {
+    if (element.nodeName === '#document-fragment') {
+      for (let i = 0; i < element.children.length; i++) {
+        element.children[i].setAttribute(key, value);
+      }
+      return;
+    }
     element.setAttribute(key, value);
+    return;
   }
 
   getNode(): HTMLElement {

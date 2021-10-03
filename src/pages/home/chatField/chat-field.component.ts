@@ -1,5 +1,6 @@
 import { Block } from '../../../framework/core/block.ts';
 import { chatFieldTemplate } from './chat-field.template';
+import { store } from '../../../store/index';
 
 interface Properties {
   components?: Block[];
@@ -17,22 +18,21 @@ class ChatField extends Block {
 
 export const chatField = new ChatField({
   data: {
-    chatList: [
-      {
-        body: 'quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto',
-        id: 1,
-        title:
-          'sunt aut facere repellat provident occaecati excepturi optio reprehenderit',
-        userId: 1,
-      },
-      {
-        body: 'est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\nqui aperiam non debitis possimus qui neque nisi nulla',
-        id: 2,
-        title: 'qui est esse',
-        userId: 1,
-      },
-    ],
+    showAside: false,
   },
   selector: 'chatfield',
   template: chatFieldTemplate,
+  methods: {
+    addUser() {
+      fetch(store.state.baseUrl + '/api/v2/chats/user', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        credentials: 'include',
+        mode: 'cors',
+        body: JSON.stringify({ title: this.data.title }),
+      });
+    },
+  },
 });

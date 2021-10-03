@@ -1,8 +1,6 @@
 import avatar1 from '../../../assets/img/users__avatars/avatar.png';
 import avatar2 from '../../../assets/img/users__avatars/avatar-2.png';
 
-import { iconUser } from '../../../components/ui/icons/iconUser';
-
 export const chatListTemplate = `
 <div class="chat-list">
     <h3 class="chat-list__title">Чаты</h3>
@@ -13,20 +11,16 @@ export const chatListTemplate = `
         </svg>
         <input class="input" type="text" placeholder="Поиск">
     </div>
-    <button class="btn">
-        <span>Создать чат</span>
-    </button>
-    <testComponents/>
-    <div class="chat-list__chats">
-        <div class="chats__item">
-            <span class="item__chat-time">10:42</span>
-            <div class="item__avatar-wrp">
-                <img src="${avatar2}" alt="avatar">
-            </div>
-            <span class="item__chat-name">Practicum Team</span>
-            <span class="item__chat-text">Привет, ребята, зацените новую фучу!</span>
-        </div>
-        <div class="chats__item">
+    <div class="chat-list__add-wrp" id="add-wrp">
+        <input class="add-wrp__input" type="text" v-model="title">
+        <button class="btn add-wrp__btn" @click="addChat" >
+            <span>Создать чат</span>
+        </button>
+    </div>
+    
+    <div class="chat-list__chats" id="chat-list">
+        
+        <!-- <div class="chats__item">
             <span class="item__chat-time">10:42</span>
             <div class="item__avatar-wrp">
                 <img src="${avatar1}" alt="avatar">
@@ -81,6 +75,6 @@ export const chatListTemplate = `
             </div>
             <span class="item__chat-name">Practicum Team</span>
             <span class="item__chat-text">Привет, ребята, зацените новую фучу!</span>
-        </div>
+        </div> -->
     </div>
 </div>`;

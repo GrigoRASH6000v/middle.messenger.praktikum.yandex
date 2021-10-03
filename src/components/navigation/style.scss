@@ -29,6 +29,14 @@
     color: $brand-clr-1;
     font-size: 2rem;
   }
+  .sign-out-icon {
+    color: $brand-clr-2;
+    font-size: 2rem;
+  }
+
+  &__sign-out {
+    background-color: transparent;
+  }
   &__item--logo {
     align-self: flex-start;
   }
