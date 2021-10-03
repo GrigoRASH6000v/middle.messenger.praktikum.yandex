@@ -72,13 +72,6 @@ export const loginPage = new LoginPage({
           ;
         }
       });
-      // fetchHTTP
-      //   .post('/api/v2/auth/signin', {
-      //     mode: 'cors',
-      //     credentials: true,
-      //     body: form,
-      //   })
-      //   .then((res) => console.log(res));
     },
   },
 });

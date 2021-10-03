@@ -1,6 +1,5 @@
 import { EventBus } from './ebent-bus';
 import isEmpty from '../../utils/modules/isEmpty';
-import { utils } from '../../utils';
 
 const templator = require('vue-template-compiler');
 

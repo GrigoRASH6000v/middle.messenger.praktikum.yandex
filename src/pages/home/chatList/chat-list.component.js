@@ -40,6 +40,7 @@ export const chatList = new ChatList({
       });
       target.classList.toggle('chats__item--selected');
       store.state.chat.selectedChat = target.dataset.id;
+      eventBus.emit('selectChat', target.dataset.id);
     },
     getChat() {
       fetch(store.state.baseUrl + '/api/v2/chats', {
@@ -114,7 +115,6 @@ export const chatList = new ChatList({
       this.initListener();
     },
     initListener() {
-      console.log(this);
       let chats = document.querySelectorAll('.chats__item');
       let buttons = document.querySelectorAll('.chats__item-btn-remove');
       buttons.forEach((el, idx) => {
