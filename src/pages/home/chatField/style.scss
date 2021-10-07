@@ -4,10 +4,11 @@
   grid-template-rows: 8rem 1fr;
   height: 100%;
   overflow: hidden;
-  grid-template-columns: 2fr 30rem;
+  grid-template-columns: 2fr 0;
   grid-template-areas:
     'header aside'
-    'body aside';
+    'body aside'
+    'footer aside';
   .chat-field__header {
     grid-area: header;
     display: grid;
@@ -64,6 +65,7 @@
     .item__text {
       background-color: $brand-clr-1;
     }
+    .text__name,
     .text__cintent {
       color: $white-clr;
     }
@@ -93,9 +95,15 @@
     font-size: 1.2rem;
     color: $text-clr-3;
   }
-  .header__btn {
+  .header__btn--add-remove,
+  .header__btn--add-plus,
+  .header__btn--search,
+  .header__btn--add {
     padding: 0;
     background-color: transparent;
+  }
+  .header__btn--search {
+    display: none;
   }
   .header__btn-icon {
     transition-duration: 0.3s;
@@ -123,6 +131,8 @@
     color: $text-clr-1;
   }
   .aside__body {
+    height: 100%;
+    overflow: hidden;
     display: grid;
     grid-template-rows: 24rem 1fr;
   }
@@ -158,6 +168,8 @@
   .aside__body-content {
     display: flex;
     flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
   }
   .body-content__item {
     display: grid;
@@ -188,6 +200,7 @@
     padding: 1rem 2rem;
   }
   .add-user__input {
+    opacity: 0;
     background-color: transparent;
     transition-duration: 0.3s;
     position: relative;
@@ -199,16 +212,73 @@
     font-size: 1.4rem;
     border: none;
     border-bottom: 1px solid $grey-clr;
+    &::placeholder {
+      color: $grey-clr;
+    }
   }
   .add-user__btn {
     z-index: 2;
   }
   .body-header__add-user--show {
+    .header__btn--search {
+      display: block;
+    }
+    .header__btn--add {
+      display: none;
+    }
     .add-user__input {
+      opacity: 1;
       transform: translateX(0);
     }
-    .header__btn-icon {
-      color: $brand-clr-1;
+  }
+  .chat-field__footer {
+    justify-content: center;
+    justify-items: center;
+    padding: 2rem;
+    border-top: 1px solid $grey-clr;
+    grid-area: footer;
+    height: 8rem;
+    display: grid;
+    column-gap: 2rem;
+    align-items: center;
+    grid-template-columns: minmax(30rem, 58rem) 4rem;
+  }
+  .footer__input {
+    font-size: 1.2rem;
+    width: 100%;
+    max-width: 58rem;
+    background-color: $brand-clr-3;
+    transition-property: border-color;
+    transition-duration: 0.3s;
+    padding: 1.3rem 2.3rem;
+    border-radius: 2rem;
+    border: 1px solid transparent;
+    outline: none;
+    &:focus {
+      border-color: $brand-clr-1;
+    }
+    &::placeholder {
+      font-family: 'Roboto-Regular';
+      color: $brand-clr-2;
+      font-size: 1.2rem;
     }
   }
+  .footer__send-btn {
+    transition-duration: 0.3s;
+    transition-property: background-color;
+    background-color: $brand-clr-1;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    &:hover {
+      background-color: lighten($color: $brand-clr-1, $amount: 10%);
+    }
+  }
+  .footer__send-icon {
+    font-size: 2rem;
+    color: $white-clr;
+  }
+}
+.chat-field--show-aside {
+  grid-template-columns: 2fr 30rem;
 }

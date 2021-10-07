@@ -6,8 +6,10 @@ import isEmpty from './modules/isEmpty.ts';
 import get from './modules/get.ts';
 import set from './modules/set';
 import { isUndefined } from './modules/isUndefined.ts';
+import isObject from './modules/isObject';
 
 export const utils = {
+  isObject,
   last,
   first,
   range,

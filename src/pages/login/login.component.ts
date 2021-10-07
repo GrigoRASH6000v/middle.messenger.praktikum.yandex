@@ -1,8 +1,9 @@
 import { Block } from '../../framework/core/block.ts';
 import { loginTemplate } from './login.template';
 import { Validation } from '../../framework/core/validation.ts';
-import { store } from '../../store/index'
-import router from '../../router/routes'
+import { store } from '../../store/index';
+import router from '../../router/routes';
+import fetchHTTP from '../../framework/core/fetch';
 
 interface Properties {
   components?: Block[];
@@ -49,29 +50,22 @@ export const loginPage = new LoginPage({
         login: this.data.login,
         password: this.data.password,
       };
-      fetch(store.state.baseUrl+ '/api/v2/auth/signin', {
-        method: 'POST',
-        mode: 'cors',
-        credentials: 'include',
-        body: JSON.stringify(form),
-        headers: {
-          'content-type': 'application/json', // Данные отправляем в формате JSON
-        },
-      }).then((res) => {
-        if (res.ok) {
-          fetch(store.state.baseUrl+'/api/v2/auth/user', {
-            method: 'GET',
-            credentials: 'include'
-            mode: 'cors'
-          }).then(res=>{
-            if(res.ok){
-              store.state.authenticated = true
-              router.navigation('/messenger')
-            }
-          })
-          ;
-        }
-      });
+      fetchHTTP
+        .post(store.state.baseUrl + '/api/v2/auth/signin', {
+          body: form,
+        })
+        .then((res) => {
+          if (res.data === 'OK') {
+            fetchHTTP
+              .get(store.state.baseUrl + '/api/v2/auth/user')
+              .then((res) => {
+                if (res.status === 200) {
+                  store.state.authenticated = true;
+                  router.navigation('/messenger');
+                }
+              });
+          }
+        });
     },
   },
 });

@@ -1,5 +1,6 @@
 import { EventBus } from './ebent-bus';
 import isEmpty from '../../utils/modules/isEmpty';
+import { utils } from '../../utils/index';
 
 const templator = require('vue-template-compiler');
 
@@ -26,6 +27,10 @@ export abstract class Block {
 
   private el: HTMLElement | null;
 
+  private target: HTMLElement | null;
+
+  private mount: boolean;
+
   private readonly template: string;
 
   public readonly selector: string;
@@ -39,13 +44,15 @@ export abstract class Block {
   public components: Block[];
 
   constructor(properties: Properties) {
+    this.mount = false;
     this.parent = null;
     this.el = null;
     this.components = properties.components;
     this.methods = properties.methods;
     this.template = properties.template;
+    this.target = null;
     this.selector = properties.selector;
-    this.data = properties.data ? this._makePropsProxy(properties.data) : null;
+    this.data = properties.data ? this._makeDeepProxy(properties.data) : null;
     this._registerEvents(this.eventBus);
   }
 
@@ -69,33 +76,21 @@ export abstract class Block {
   }
   _binding() {
     for (let key in this.methods) {
-      this.methods[key].bind(this);
+      this.methods[key] = this.methods[key].bind(this);
     }
   }
-  _update(): void {
-    this.update();
-  }
-
-  _mounted(): void {
-    if (this.selector) {
-      const target = this._getTarget(this.selector);
-      this.parent = this._getParent(target);
-      target.replaceWith(this.getNode());
-      if (this.components) for (const c of this.components) c.init();
+  _makeDeepProxy(obj) {
+    obj = this._makePropsProxy(obj);
+    for (let key in obj) {
+      if (utils.isObject(obj[key])) {
+        obj[key] = this._makeDeepProxy(obj[key]);
+      }
     }
-
-    this.mounted();
+    return obj;
   }
-
-  update(): void {}
-
-  created(): void {}
-
-  mounted(): void {}
-
-  _makePropsProxy(data: object) {
+  _makePropsProxy(data) {
     return new Proxy(data, {
-      get(target: any, property: string) {
+      get(target, property) {
         if (property.startsWith('_')) {
           throw new Error('Нет прав');
         } else {
@@ -103,7 +98,7 @@ export abstract class Block {
           return typeof value === 'function' ? value.bind(target) : value;
         }
       },
-      set: (target: any, property: string, value) => {
+      set: (target, property, value) => {
         if (property.startsWith('_')) {
           throw new Error('Нет прав');
         } else {
@@ -116,7 +111,31 @@ export abstract class Block {
       },
     });
   }
+  _update(): void {
+    const compiled = templator.compile(this.template, this.data);
+    this._createResources(compiled);
+    this.target?.replaceWith(this.getNode());
+    this.update();
+  }
 
+  _mounted(): void {
+    if (this.selector) {
+      this.target = this._getTarget(this.selector);
+      this.parent = this._getParent(this.target);
+      this.target.replaceWith(this.getNode());
+      this.target = document.getElementById(this.getNode().id);
+      if (this.components) for (const c of this.components) c.init();
+      this.mount = true;
+    }
+
+    this.mounted();
+  }
+
+  update(): void {}
+
+  created(): void {}
+
+  mounted(): void {}
   _getTarget(selector: string): HTMLElement {
     return document.querySelector(selector);
   }
@@ -142,8 +161,9 @@ export abstract class Block {
           );
         } else if (key === 'v-model') {
           if (nodeElement.tagName === 'INPUT') {
+            nodeElement.value = utils.get(data, attrs[key], '');
             nodeElement.addEventListener('input', () => {
-              this.setProps(attrs[key], nodeElement.value);
+              utils.set(data, attrs[key], nodeElement.value);
             });
           }
         } else if (key === 'v-for') {
@@ -163,7 +183,9 @@ export abstract class Block {
           : null;
         if (child.type === Block.BIND_TYPES.IS_METHOD) {
           nodeElement.textContent = child.tokens
-            .map((t: unknown) => data[t['@binding']])
+            .map((t: unknown) => {
+              return utils.get(data, t['@binding'], '');
+            })
             .join(' ');
         }
       });

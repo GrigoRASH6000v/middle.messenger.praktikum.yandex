@@ -1,22 +1,20 @@
 export default function set(
-  object: any,
+  object: { [key: string]: () => unknown },
   path: string,
-  value: unknown,
-  defaultValue: any
+  value: unknown
 ): unknown {
   if (typeof path !== 'string') {
     return;
   }
   const keys = path.split('.');
-
   let result = object;
-  for (const key of keys) {
-    result = result[key];
-    if (result === undefined) {
-      return 'target not found';
+  for (let i = 0; i < keys.length; i++) {
+    if (i === keys.length - 1) {
+      break;
     }
+    result = result[keys[i]];
   }
-  console.log('result', result, value);
-  result = value;
+  const lastKey = keys.reverse()[0];
+  result[lastKey] = value;
   return;
 }

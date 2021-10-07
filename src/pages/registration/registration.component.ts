@@ -3,6 +3,7 @@ import { registrationPageTemplate } from './registration.template';
 import { Validation } from '../../framework/core/validation.ts';
 import router from '../../router/routes';
 import { store } from '../../store/index';
+import fetchHTTP from '../../framework/core/fetch';
 
 interface Properties {
   components?: Block[];
@@ -94,28 +95,23 @@ export const registrationPage = new RegistrationPage({
       };
       const validation = new Validation().getValidStatus(form);
       if (validation) {
-        fetch(store.state.baseUrl + '/api/v2/auth/signup', {
-          method: 'POST',
-          headers: {
-            'content-type': 'application/json',
-          },
-          credentials: 'include',
-          mode: 'cors',
-          body: JSON.stringify(this.data),
-        }).then((res) => {
-          if (res.ok) {
-            fetch(store.state.baseUrl + '/api/v2/auth/user', {
-              method: 'GET',
-              mode: 'cors',
-              credentials: 'include',
-            }).then((response) => {
-              if (response.ok) {
-                store.state.authenticated = true;
-                router.navigation('/messenger');
-              }
-            });
-          }
-        });
+        fetchHTTP
+          .post(store.state.baseUrl + '/api/v2/auth/signup', {
+            body: this.data,
+          })
+          .then((res) => {
+            if (res.status === 200) {
+              fetchHTTP
+                .get(store.state.baseUrl + '/api/v2/auth/user')
+                .then((res) => {
+                  if (res.status === 200) {
+                    store.state.authenticated = true;
+                    store.state.userData = res.data;
+                    router.navigation('/messenger');
+                  }
+                });
+            }
+          });
       }
     },
   },

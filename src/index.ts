@@ -3,19 +3,19 @@ import { app } from './app/app.component.ts';
 import './assets/style/style.scss';
 import router from './router/routes.ts';
 import { store } from './store/index';
+import fetchHTTP from './framework/core/fetch';
 
 store.state.baseUrl = 'https://ya-praktikum.tech';
 
 async function getUser() {
-  return await fetch(store.state.baseUrl + '/api/v2/auth/user', {
-    method: 'GET',
-    credentials: 'include',
-    mode: 'cors',
-  }).then((res) => {
-    if (res.ok) {
-      store.state.authenticated = true;
-    }
-  });
+  return fetchHTTP
+    .get(store.state.baseUrl + '/api/v2/auth/user')
+    .then((res) => {
+      if (res.status === 200) {
+        store.state.authenticated = true;
+        store.state.userData = res.data;
+      }
+    });
 }
 
 getUser().then(() => {

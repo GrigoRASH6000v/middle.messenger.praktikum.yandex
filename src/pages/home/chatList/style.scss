@@ -4,7 +4,7 @@
   background-color: $brand-clr-3;
   max-width: 42rem;
   width: 100%;
-  padding: 4.3rem 2rem 2rem 2rem;
+  padding: 4.3rem 2rem 2rem;
   display: grid;
   max-height: 100%;
   row-gap: 2rem;
@@ -70,6 +70,7 @@
     color: $text-clr-3;
   }
   .item__chat-name {
+    align-self: flex-start;
     grid-area: name;
     font-size: 1.4rem;
     color: $text-clr-1;

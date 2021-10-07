@@ -2,6 +2,7 @@ import { navigationTemplate } from './navigation.template.js';
 import { Block } from '../../framework/core/block';
 import { store } from '../../store/index';
 import router from '../../router/routes';
+import fetchHTTP from '../../framework/core/fetch';
 
 class Navigation extends Block {
   constructor(properties) {
@@ -14,16 +15,14 @@ export const navigation = new Navigation({
   template: navigationTemplate,
   methods: {
     logout() {
-      fetch(store.state.baseUrl + '/api/v2/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-        mode: 'cors',
-      }).then((res) => {
-        if (res.ok) {
-          store.state.authenticated = false;
-          router.navigation('/login');
-        }
-      });
+      fetchHTTP
+        .post(store.state.baseUrl + '/api/v2/auth/logout')
+        .then((res) => {
+          if (res.status === 200) {
+            store.state.authenticated = false;
+            router.navigation('/login');
+          }
+        });
     },
   },
 });

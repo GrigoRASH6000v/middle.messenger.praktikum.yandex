@@ -1,34 +1,17 @@
 import avatar1 from '../../../assets/img/users__avatars/avatar.png';
 import yndxBigAvatar from '../../../assets/img/group_avatars/yndx-big-avatar.png';
 import avatar3 from '../../../assets/img/users__avatars/avatar-3.png';
-export const chatFieldTemplate = `<div class="chat-field">
+export const chatFieldTemplate = `<div class="chat-field" id="chat-field">
     <div class="chat-field__header">
         <div class="header__chat-info">
-            <div class="item__avatar-wrp">
-                <img src="${avatar1}" alt="avatar">
-            </div>
-            <span class="chat-info__name">Александра Макарова</span>
-            <span class="chat-info__status">online</span>
+            <span id="chat-info-name" class="chat-info__name"></span>
         </div>
-       
-        <button  class="header__btn"><i class="header__btn-icon fas fa-ellipsis-v"></i></button>
     </div>
-    <div class="chat-field__body">
-         <div class="body__item body__item--incoming">
-            <div class="item__avatar-wrp item__avatar-wrp--body">
-                <img src="${avatar1}" alt="avatar">
-            </div>
-            <div class="item__text">
-                <span class="text__name">Александра Макарова</span>
-                 <p class="text__cintent">
-                     Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                     Vel, fugiat. Nihil, laudantium maiores expedita dolor velit
-                    adipisci doloribus tenetur assumenda rerum ducimus
-                     unde, omnis dolores voluptatibus, obcaecati exercitationem ipsa.
-                 </p>
-                 <span class="text__last-date">8 минут назад</span>
-             </div>
-         </div>
+    <div class="chat-field__body" id="chat-body"> 
+    </div>
+    <div class="chat-field__footer">
+        <input class="footer__input" placeholder="Сообщение" v-model="messageText" type="text">
+        <button class="footer__send-btn" @click="sendMessage"><i class="footer__send-icon fab fa-telegram-plane"></i></button>
     </div>
     <aside class="chat-field__aside">
         <div class="aside__header">
@@ -40,23 +23,15 @@ export const chatFieldTemplate = `<div class="chat-field">
                     <img class="body-header__group-avatar" src="${yndxBigAvatar}" alt="group-avatar">
                     <button class="body-header__group-edit"><i class="edit-icon fas fa-pencil-alt"></i></button>
                 </div>
-                <span class="body-header__group-name">test chat 8</span>
+                <span class="body-header__group-name" id="group-name">{{selectedChat.title}}</span>
                 <div class="body-header__add-user" id="add-user">
-                    <input class="add-user__input" id="add-user-input" v-model="userName" type="text">
-                    <button @click="addUser" class=" header__btn add-user__btn"><i class="header__btn-icon fas fa-user-plus"></i></button>
+                    <input class="add-user__input" id="add-user-input" v-model="userName" type="text" placeholder="Введите логин пользователя">
+                    <button @click="showSerch" id="add-user-btn" class="header__btn--add add-user__btn"><i class="header__btn-icon fas fa-user-plus"></i></button>
+                    <button @click="searchUser" id="add-user-search" class="header__btn--search add-user__btn"><i class="header__btn-icon fas fa-search"></i></button>
+                    <button @click="showSerch" id="add-user-search" class="header__btn--search add-user__btn"><i class="header__btn-icon fas fa-times"></i></button>
                 </div>
             </div>
-            <div class="aside__body-content">
-                <div class="body-content__item">
-                    <img class="content__item-avatar" src="${avatar3}" alt="user-avatar">
-                    <span class="content__item-name">Андрей Аристов</span>
-                    <button  class="header__btn content__item-edit-btn"><i class="header__btn-icon fas fa-ellipsis-v"></i></button>
-                </div>
-                <div class="body-content__item">
-                    <img class="content__item-avatar" src="${avatar1}" alt="user-avatar">
-                    <span class="content__item-name">Александра Макарова</span>
-                    <button  class="header__btn content__item-edit-btn"><i class="header__btn-icon fas fa-ellipsis-v"></i></button>
-                </div>
+            <div class="aside__body-content" id="aside-body">
             </div>
         </div>
     </aside>
