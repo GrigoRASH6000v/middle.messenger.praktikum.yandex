@@ -8,8 +8,10 @@ enum METHODS {
 
 interface Options {
   retries?: number;
-  data?: { [key: string]: unknown };
+  body?: { [key: string]: unknown };
   headers?: { [key: string]: string };
+  mode?: string,
+  credentials:boolean
 }
 
 function queryStringify(data: { [key: string]: string }): string {
@@ -29,6 +31,7 @@ function setHeaders(xhr: XMLHttpRequest, headers: { [key: string]: string }) {
   for (const key in headers) {
     xhr.setRequestHeader(key, headers[key]);
   }
+  
   return xhr;
 }
 
@@ -37,7 +40,7 @@ class HTTPTransport {
   public options: { [key: string]: unknown };
   public method: string;
   constructor(
-    url: string,
+    url: string ,
     options: { [key: string]: unknown },
     method: string
   ) {
@@ -45,35 +48,55 @@ class HTTPTransport {
   }
   init = () => this.request(this.url, this.options, this.method);
   request(url: string, options: Options, method: string){
+    
      return new Promise((resolve, reject) =>{
        if(options && !isEmpty(options) && method==='GET'){
-         url+=queryStringify(options.data)
+         url+=queryStringify(options.body)
        }
        let xhr = new XMLHttpRequest();
        xhr.open(method, url);
-      if(options && options.headers) xhr = setHeaders(xhr, options.headers)
+       
+      if(options && options.headers){
+        xhr = setHeaders(xhr, options.headers)
+      }else{
+        xhr.setRequestHeader('Content-Type', 'application/json')
+      }
+      xhr.withCredentials = true
       xhr.addEventListener('load', () => {
-        resolve(xhr);
-      });
+        const response = {
+          status: xhr.status,
+          url: xhr.responseURL,
+          data: xhr.response === "OK" ? xhr.response : JSON.parse(xhr.response)
+        }
+        resolve(response);
+      })
       const handleError = (error: unknown) => error;
-      xhr.addEventListener('abort', reject);
-      xhr.addEventListener('error', handleError);
+      xhr.addEventListener('abort', ()=>{
+        console.log('abort')
+      });
+      xhr.addEventListener('error', ()=>{
+        console.log('error')
+      });
       xhr.ontimeout = reject;
-      if (method === METHODS.GET || method === METHODS.DELETE)
+      if (method === METHODS.GET)
         xhr.send();
-       if (method === METHODS.POST || method === METHODS.PUT) {
-        if(options && options.data) xhr.send(JSON.stringify(options.data));
+       if (method === METHODS.POST || method === METHODS.PUT || method === METHODS.DELETE) {
+        if(options && options.body){
+          xhr.send(JSON.stringify(options.body));
+        }else{
+          xhr.send()
+        }
       }
     }
   }
 }
-
-export const fetchHTTP: { [key: string]: (url: string, options: Options) => Promise<unknown> } = {
+ const fetchHTTP: { [key: string]: (url: string, options: Options) => Promise<unknown> } = {
   get: (url: string, options: Options) =>
     new HTTPTransport(url, options, 'GET').init(),
   post: (url: string, options: Options) =>
   new HTTPTransport(url, options, 'POST').init(),
-  delite: (url: string, options: Options) =>
+  delete: (url: string, options: Options) =>
   new HTTPTransport(url, options, 'DELETE').init(),
-  put: (url: string, options: Options) =>  new HTTPTransport(url, options, 'DELETE').init(),
+  put: (url: string, options: Options) =>  new HTTPTransport(url, options, 'PUT').init(),
 };
+export default fetchHTTP

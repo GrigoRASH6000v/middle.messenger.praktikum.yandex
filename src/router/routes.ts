@@ -4,6 +4,7 @@ import { home } from '../pages/home/home.component';
 import { personalAccount } from '../pages/personal_account/personal-account.component';
 import { errorPage } from '../pages/505/error-page.component';
 import { notFoundPage } from '../pages/404/not-found-page.component';
+import Router from '../framework/core/router';
 
 const routes: { path: string; redirect?: string; component?: unknown }[] = [
   {
@@ -12,6 +13,10 @@ const routes: { path: string; redirect?: string; component?: unknown }[] = [
   },
   {
     path: '/',
+    redirect: '/messenger',
+  },
+  {
+    path: '/messenger',
     component: home,
   },
   {
@@ -19,11 +24,11 @@ const routes: { path: string; redirect?: string; component?: unknown }[] = [
     component: loginPage,
   },
   {
-    path: '/registration',
+    path: '/sign-up',
     component: registrationPage,
   },
   {
-    path: '/personal-account',
+    path: '/settings',
     component: personalAccount,
   },
   {
@@ -36,4 +41,9 @@ const routes: { path: string; redirect?: string; component?: unknown }[] = [
   },
 ];
 
-export default routes;
+const router = new Router({
+  routes,
+  linkClass: 'router-link',
+});
+
+export default router;

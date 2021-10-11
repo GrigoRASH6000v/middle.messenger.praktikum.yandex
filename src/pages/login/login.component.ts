@@ -1,6 +1,9 @@
 import { Block } from '../../framework/core/block.ts';
 import { loginTemplate } from './login.template';
 import { Validation } from '../../framework/core/validation.ts';
+import { store } from '../../store/index';
+import router from '../../router/routes';
+import fetchHTTP from '../../framework/core/fetch';
 
 interface Properties {
   components?: Block[];
@@ -15,9 +18,9 @@ class LoginPage extends Block {
     super(properties);
   }
   mounted() {
-    const mail = {
-      domElement: document.querySelector('#email'),
-      type: 'email',
+    const login = {
+      domElement: document.querySelector('#login'),
+      type: 'login',
       classError: 'no-valid',
       classDone: 'valid',
       events: ['blur', 'focus'],
@@ -29,7 +32,7 @@ class LoginPage extends Block {
       classDone: 'valid',
       events: ['blur', 'focus'],
     };
-    const validation = new Validation([mail, password]);
+    const validation = new Validation([login, password]);
     validation.on();
   }
 }
@@ -38,16 +41,31 @@ export const loginPage = new LoginPage({
   selector: 'login',
   template: loginTemplate,
   data: {
-    email: '',
+    login: '',
     password: '',
   },
   methods: {
     submitForm(): void {
       const form = {
-        email: this.data.email,
+        login: this.data.login,
         password: this.data.password,
       };
-      console.log(form);
+      fetchHTTP
+        .post(store.state.baseUrl + '/api/v2/auth/signin', {
+          body: form,
+        })
+        .then((res) => {
+          if (res.data === 'OK') {
+            fetchHTTP
+              .get(store.state.baseUrl + '/api/v2/auth/user')
+              .then((res) => {
+                if (res.status === 200) {
+                  store.state.authenticated = true;
+                  router.navigation('/messenger');
+                }
+              });
+          }
+        });
     },
   },
 });

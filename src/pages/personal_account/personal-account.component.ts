@@ -1,6 +1,9 @@
 import { Block } from '../../framework/core/block.ts';
 import { personalAccountPageTemplate } from './personal-account.template';
 import { Validation } from '../../framework/core/validation.ts';
+import { store } from '../../store/index';
+import router from '../../router/routes';
+import fetchHTTP from '../../framework/core/fetch';
 
 interface Properties {
   components?: Block[];
@@ -64,6 +67,7 @@ class PersonalAccount extends Block {
       target: document.querySelector('#name_in_chat-wrp'),
     };
     new Validation([mail, phone, login, name, surname, nameInChat]).on();
+    this.methods.setValues();
   }
 }
 
@@ -71,24 +75,47 @@ export const personalAccount = new PersonalAccount({
   selector: 'personal-account',
   template: personalAccountPageTemplate,
   data: {
-    email: '',
-    login: '',
-    name: '',
-    surname: '',
-    nameInChat: '',
-    phone: '',
+    form: {
+      email: '',
+      login: '',
+      first_name: '',
+      second_name: '',
+      display_name: '',
+      phone: '',
+    },
   },
   methods: {
+    logout() {
+      fetchHTTP
+        .post(store.state.baseUrl + '/api/v2/auth/logout')
+        .then((res) => {
+          if (res.status === 200) {
+            store.state.authenticated = false;
+            router.navigation('/login');
+          }
+        });
+    },
+    setValues() {
+      this.data.form.first_name = store.state.userData.first_name;
+      this.data.form.second_name = store.state.userData.second_name;
+      this.data.form.display_name = store.state.userData.display_name;
+      this.data.form.login = store.state.userData.login;
+      this.data.form.email = store.state.userData.email;
+      this.data.form.phone = store.state.userData.phone;
+      this._update();
+    },
     submitForm(): void {
-      const form = {
-        email: this.data.email,
-        login: this.data.login,
-        name: this.data.name,
-        surname: this.data.surname,
-        phone: this.data.nameInChat,
-        password: this.data.phone,
+      const body = {
+        first_name: this.data.form.first_name,
+        second_name: this.data.form.second_name,
+        display_name: this.data.form.display_name,
+        login: this.data.form.login,
+        email: this.data.form.email,
+        phone: this.data.form.phone,
       };
-      console.log(form);
+      fetchHTTP
+        .put(store.state.baseUrl + '/api/v2/user/profile', { body })
+        .then((res) => (store.state.userData = res.data));
     },
   },
 });

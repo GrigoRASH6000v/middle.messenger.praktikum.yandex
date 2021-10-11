@@ -16,12 +16,23 @@ export class Validation {
       /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/,
     name: /^[a-zA-Zа-яА-Я]{2,20}$/,
     password:
-      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$/g,
+    /^(?=.*\d)\w{3,20}$/m,
   };
   private elements: Element[];
+  public status: boolean
   constructor(elements: Element[]) {
     this.elements = elements;
+    this.status = true
   }
+  getValidStatus(values){
+    for(let key in values){
+      if( !this.getResult(values[key].type, values[key].value)){
+        return false
+      }
+      
+    }
+    return true
+  },
   getResult(type:string, value:string):boolean {
     return Validation.REGULAR_EXPRESSIONS[type].test(
       value
@@ -31,7 +42,6 @@ export class Validation {
       const result = this.getResult(element.type, value);
       const target = element.target ? element.target : element.domElement
       if (!result) {
-        
         target.classList.remove(element.classDone);
         target.classList.add(element.classError);
       }
