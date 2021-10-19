@@ -1,6 +1,5 @@
-import { EventBus } from './ebent-bus';
-import isEmpty from '../../utils/modules/isEmpty';
-import { utils } from '../../utils/index';
+import { EventBus } from './ebent-bus.ts';
+import { utils } from '@/utils/index.ts';
 
 const templator = require('vue-template-compiler');
 
@@ -151,7 +150,7 @@ export abstract class Block {
     const nodeElement = document.createElement(object.tag);
     let vFor = false;
     let fragment = null;
-    if (!isEmpty(object.attrsMap)) {
+    if (!utils.isEmpty(object.attrsMap)) {
       const attrs = object.attrsMap;
       for (const key in attrs) {
         if (key === '@click') {
@@ -213,7 +212,7 @@ export abstract class Block {
 
     return nodeElement;
   }
-  _setAttrs(element: HTMLElement, key: unknown, value: unknown): void {
+  _setAttrs(element: HTMLElement, key: string, value: unknown): void {
     if (element.nodeName === '#document-fragment') {
       for (let i = 0; i < element.children.length; i++) {
         element.children[i].setAttribute(key, value);

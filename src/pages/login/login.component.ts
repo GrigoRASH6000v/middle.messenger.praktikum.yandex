@@ -1,9 +1,9 @@
-import { Block } from '../../framework/core/block.ts';
-import { loginTemplate } from './login.template';
+import { Block } from '@/framework/core/block.ts';
+import { loginTemplate } from './login.template.js';
 import { Validation } from '../../framework/core/validation.ts';
-import { store } from '../../store/index';
-import router from '../../router/routes';
-import fetchHTTP from '../../framework/core/fetch';
+import { store } from '@/store/index.ts';
+import router from '@/router/routes.ts';
+import fetchHTTP from '@/framework/core/fetch.ts';
 
 interface Properties {
   components?: Block[];

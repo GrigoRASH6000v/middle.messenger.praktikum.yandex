@@ -1,4 +1,4 @@
-import { Block } from '../../framework/core/block.ts';
+import { Block } from '@/framework/core/block';
 import { notFoundPageTemplate } from './not-found-page.template';
 
 interface Properties {

@@ -4,9 +4,9 @@ import range from './modules/range.ts';
 import rangeright from './modules/rangeright.ts';
 import isEmpty from './modules/isEmpty.ts';
 import get from './modules/get.ts';
-import set from './modules/set';
+import set from './modules/set.ts';
 import { isUndefined } from './modules/isUndefined.ts';
-import isObject from './modules/isObject';
+import isObject from './modules/isObject.ts';
 
 export const utils = {
   isObject,

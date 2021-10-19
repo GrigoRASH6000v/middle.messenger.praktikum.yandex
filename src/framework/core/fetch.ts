@@ -1,4 +1,4 @@
-import isEmpty from "../../utils/modules/isEmpty";
+import utils from "@/utils/index.ts";
 enum METHODS {
   GET = 'GET',
   POST = 'POST',
@@ -50,7 +50,7 @@ class HTTPTransport {
   request(url: string, options: Options, method: string){
     
      return new Promise((resolve, reject) =>{
-       if(options && !isEmpty(options) && method==='GET'){
+       if(options && !utils.isEmpty(options) && method==='GET'){
          url+=queryStringify(options.body)
        }
        let xhr = new XMLHttpRequest();
@@ -70,7 +70,6 @@ class HTTPTransport {
         }
         resolve(response);
       })
-      const handleError = (error: unknown) => error;
       xhr.addEventListener('abort', ()=>{
         console.log('abort')
       });
@@ -91,12 +90,12 @@ class HTTPTransport {
   }
 }
  const fetchHTTP: { [key: string]: (url: string, options: Options) => Promise<unknown> } = {
-  get: (url: string, options: Options) =>
+  get: (url: string, options?: Options) =>
     new HTTPTransport(url, options, 'GET').init(),
-  post: (url: string, options: Options) =>
+  post: (url: string, options?: Options) =>
   new HTTPTransport(url, options, 'POST').init(),
-  delete: (url: string, options: Options) =>
+  delete: (url: string, options?: Options) =>
   new HTTPTransport(url, options, 'DELETE').init(),
-  put: (url: string, options: Options) =>  new HTTPTransport(url, options, 'PUT').init(),
+  put: (url: string, options?: Options) =>  new HTTPTransport(url, options, 'PUT').init(),
 };
 export default fetchHTTP

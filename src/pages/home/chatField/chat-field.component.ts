@@ -64,17 +64,17 @@ export const chatField = new ChatField({
      </div>`
       }).join('')
       this.data.chatBody.innerHTML = chatMessages
-    }
+    },
     closeSocket(){
       this.data.socket.close()
-    }
+    },
     sendMessage(){
       this.data.socket.send(JSON.stringify({
         content: this.data.messageText,
         type: 'message',
       }))
     },
-    createSocket(token){
+    createSocket(token:string){
       const userId = store.state.userData.id
       this.data.socket = new WebSocket(`wss://ya-praktikum.tech/ws/chats/${userId}/${this.data.selectedChat.id}/${token}`); 
       this.data.socket.addEventListener('open', ()=>{
@@ -109,7 +109,7 @@ export const chatField = new ChatField({
         this.methods.createSocket(res.data.token)
       })
     },
-    getChatUsers(data){
+    getChatUsers(data):void{
       if(!data){
         this.methods.closeSocket()
         this.data.chatField.classList.remove('chat-field--show-aside')
@@ -124,11 +124,11 @@ export const chatField = new ChatField({
         }
       })
     },
-    searchUser(){
+    searchUser():void{
       fetchHTTP.post(store.state.baseUrl + '/api/v2/user/search', {
         body: { login: this.data.userName }
       }).then(res=>this.methods.createUserList(res.data, 'user-list-add'))
-    }
+    },
     showSerch() {
       let target = document.getElementById('add-user')
       let input = target?.querySelector('#add-user-input')

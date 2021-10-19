@@ -1,8 +1,8 @@
 import { navigationTemplate } from './navigation.template.js';
-import { Block } from '../../framework/core/block';
-import { store } from '../../store/index';
-import router from '../../router/routes';
-import fetchHTTP from '../../framework/core/fetch';
+import { Block } from '@/framework/core/block.ts';
+import { store } from '@/store/index.ts';
+import router from '@/router/routes.ts';
+import fetchHTTP from '@/framework/core/fetch.ts';
 
 class Navigation extends Block {
   constructor(properties) {

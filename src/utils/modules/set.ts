@@ -1,7 +1,7 @@
 export default function set(
-  object: { [key: string]: () => unknown },
+  object: { [key: string]: unknown },
   path: string,
-  value: unknown
+  value: unknown,
 ): unknown {
   if (typeof path !== 'string') {
     return;

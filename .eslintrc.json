@@ -48,6 +48,7 @@
     "no-nested-ternary": "off",
     "@typescript-eslint/no-empty-function": ["error"],
     "no-restricted-syntax": "off",
-    "guard-for-in": "off"
+    "guard-for-in": "off",
+    "no-var-requires": "off"
   }
 }

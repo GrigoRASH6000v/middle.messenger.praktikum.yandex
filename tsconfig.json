@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "./dist/",
     "declaration": false,
     "noImplicitAny": true,
     "noUnusedLocals": true,
@@ -8,5 +8,6 @@
     "sourceMap": true,
     "strictNullChecks": true,
     "lib": ["es2015", "dom"]
-  }
+  },
+  "exclude": ["node_modules"]
 }
