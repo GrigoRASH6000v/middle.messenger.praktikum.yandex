@@ -3,7 +3,7 @@
  
  Простое и лёгкое приложение для отправки сообщений.
  
- Проект находится на стадии начала разработки 
+ Проект находится на фмнальной стадии разработки 
  
 - `npm i` — установка стабильной версии,
 - `npm start` — запуск Parcel,
@@ -15,3 +15,5 @@
 Ссылка на PR https://github.com/GrigoRASH6000v/middle.messenger.praktikum.yandex/pull/21
 
 Ссылка на netify https://kind-mcnulty-0cc578.netlify.app/
+
+[Ссылка на heroku](https://ya-sprint-4.herokuapp.com/login)
