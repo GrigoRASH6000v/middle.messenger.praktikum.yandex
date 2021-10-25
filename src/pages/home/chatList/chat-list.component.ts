@@ -1,9 +1,9 @@
-import { Block } from '../../../framework/core/block.ts';
-import { chatListTemplate } from './chat-list.template';
-import { store } from '../../../store/index';
-import { eventBus } from '../../../bus/index';
-import fetchHTTP from '../../../framework/core/fetch';
-import avatar2 from '../../../assets/img/users__avatars/avatar-2.png';
+import { Block } from '@/framework/core/block.ts';
+import { chatListTemplate } from './chat-list.template.js';
+import { store } from '@/store/index.ts';
+import { eventBus } from '@/bus/index.ts';
+import fetchHTTP from '@/framework/core/fetch.ts';
+import avatar2 from '@/assets/img/users__avatars/avatar-2.png';
 
 class ChatList extends Block {
   constructor(properties) {

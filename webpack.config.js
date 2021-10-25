@@ -1,35 +1,49 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
+  context: path.resolve(__dirname, 'src'),
   mode: 'development',
   entry: {
-    app: './src/index.ts',
+    app: './index.ts',
   },
   resolve: {
-    extensions: ['.js', '.json', '.png', '.svg', '.jpg', '.tpl'], //Здесь мы можемь прописать форматы
+    extensions: [
+      '.js',
+      '.json',
+      '.png',
+      '.woff',
+      '.woff2',
+      '.svg',
+      '.jpg',
+      '.ttf',
+      '.tpl',
+    ],
     alias: {
-      '@': path.resolve(__dirname, './src'), //Здесь мы подключаем элиасы, для более удобного подключения файлов
+      '@': path.resolve(__dirname, './src'),
     },
   },
+  devServer: {
+    port: 8000,
+    hot: true,
+  },
   output: {
-    filename: '[name].[contenthash].js',
+    filename: './js/[name].js',
     path: path.resolve(__dirname, 'dist'),
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'test',
+      title: 'My App',
+      filename: 'index.html',
+      template: './index.html',
     }),
-    // new CleanWebpackPlugin(),
-    // new MiniCssExtractPlugin({
-    //   filename: 'css/style.css',
-    // }),
-    //new CopyWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin({
+      filename: 'css/style.css',
+    }),
   ],
-  devServer: {
-    port: 8080, //Прописываем порт, с которого будет запускаться devserver
-    hot: true,
-  },
   module: {
     rules: [
       {
@@ -47,6 +61,47 @@ module.exports = {
           },
         ],
         exclude: /(node_modules)/,
+      },
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: true,
+              reloadAll: true,
+            },
+          },
+          'css-loader',
+        ],
+      },
+      {
+        test: /\.s[ac]ss$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+      },
+      {
+        test: /\.(png|jpg|jpeg|gif|svg)$/,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
+      },
+      {
+        test: /\.(woff|woff2|ttf)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'fonts/[name].[hash:7].[ext]',
+              publicPath: 'fonts',
+            },
+          },
+        ],
+      },
+      {
+        test: /\.tpl$/i,
+        loader: 'html-loader',
       },
     ],
   },

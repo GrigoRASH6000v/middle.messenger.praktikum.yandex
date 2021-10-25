@@ -7,7 +7,8 @@
     "build": "webpack build",
     "start": "webpack serve --mode development --open",
     "watch": "webpack --mode development --watch",
-    "eslint": "eslint ./src --fix"
+    "eslint": "eslint ./src --fix",
+    "serve" : "node ./server/index.js"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,8 @@
     "@typescript-eslint/eslint-plugin": "^4.28.3",
     "@typescript-eslint/parser": "^4.28.3",
     "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^9.0.1",
+    "css-loader": "^6.4.0",
     "eslint": "^7.31.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-node": "^4.1.0",
@@ -37,6 +40,7 @@
     "eslint-plugin-react-hooks": "^1.7.0",
     "eslint-plugin-unicorn": "^34.0.1",
     "express": "^4.17.1",
+    "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.4.0",
     "mini-css-extract-plugin": "^2.4.2",
     "parcel-bundler": "^1.12.5",

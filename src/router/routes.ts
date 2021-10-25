@@ -1,6 +1,6 @@
 import { loginPage } from '@/pages/login/login.component.ts';
 import { registrationPage } from '@/pages/registration/registration.component.ts';
-import { home } from '@/pages/home/home.component';
+import { home } from '@/pages/home/home.component.ts';
 import { personalAccount } from '@/pages/personal_account/personal-account.component.ts';
 import { errorPage } from '@/pages/505/error-page.component.ts';
 import { notFoundPage } from '@/pages/404/not-found-page.component.ts';

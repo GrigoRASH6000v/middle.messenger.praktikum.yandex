@@ -1,10 +1,10 @@
-import { Block } from '../../../framework/core/block.ts';
+import { Block } from '@/framework/core/block.ts';
 import { chatFieldTemplate } from './chat-field.template';
-import {eventBus} from '../../../bus/index'
-import {store} from '../../../store/index'
-import avatar3 from '../../../assets/img/users__avatars/avatar-3.png';
-import avatar1 from '../../../assets/img/users__avatars/avatar-3.png';
-import fetchHTTP from '../../../framework/core/fetch'
+import {eventBus} from '@/bus/index.ts'
+import {store} from '@/store/index.ts'
+import avatar3 from '@/assets/img/users__avatars/avatar-3.png';
+import avatar1 from '@/assets/img/users__avatars/avatar-3.png';
+import fetchHTTP from '@/framework/core/fetch.ts'
 
 interface Properties {
   components?: Block[];

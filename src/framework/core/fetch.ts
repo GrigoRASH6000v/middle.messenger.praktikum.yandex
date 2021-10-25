@@ -1,4 +1,4 @@
-import utils from "@/utils/index.ts";
+import {utils} from "@/utils/index.ts";
 enum METHODS {
   GET = 'GET',
   POST = 'POST',
