@@ -16,4 +16,4 @@
 [Ссылка на netify](https://kind-mcnulty-0cc578.netlify.app/)
 
 [Ссылка на heroku](https://ya-sprint-4.herokuapp.com/login)
-[Ссылка на pull request] (https://github.com/GrigoRASH6000v/middle.messenger.praktikum.yandex/pull/22)
+[Ссылка на pull request](https://github.com/GrigoRASH6000v/middle.messenger.praktikum.yandex/pull/22)
