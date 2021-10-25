@@ -6,8 +6,7 @@
  Проект находится на фмнальной стадии разработки 
  
 - `npm i` — установка стабильной версии,
-- `npm start` — запуск Parcel,
-- `npm serve` — запуск проекта,
+- `npm start` — запуск проекта в режиме разработки Webpack,
 - `npm run build` — сборка стабильной версии.
 
 [Макет Figma](https://www.figma.com/file/TMTziCLpMrqJp1Y8m3KLnU/messanger?node-id=15%3A344)
