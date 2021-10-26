@@ -1201,9 +1201,23 @@ a {
   font-size: 1.6rem;
   color: #7F80AA;
 }
+.personal-account .input-block__input--hide {
+  display: none;
+}
+.personal-account .inputs__input-block--grid {
+  width: 100%;
+  display: grid;
+  justify-content: flex-end;
+}
+.personal-account .inputs__input-block--hide {
+  display: none;
+}
 .personal-account .input-block__label {
   font-size: 1.6rem;
   color: #0176FF;
+}
+.personal-account .input-block__label--hidden {
+  display: none;
 }
 .personal-account .form__bottom-block {
   display: grid;
