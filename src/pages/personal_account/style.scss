@@ -51,9 +51,23 @@
       color: $brand-clr-2;
     }
   }
+  .input-block__input--hide {
+    display: none;
+  }
+  .inputs__input-block--grid {
+    width: 100%;
+    display: grid;
+    justify-content: flex-end;
+  }
+  .inputs__input-block--hide {
+    display: none;
+  }
   .input-block__label {
     font-size: 1.6rem;
     color: $brand-clr-1;
+  }
+  .input-block__label--hidden {
+    display: none;
   }
   .form__bottom-block {
     display: grid;

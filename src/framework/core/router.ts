@@ -56,7 +56,7 @@ class Router {
       this.currentComponent = this.find(this.currentPath);
 
       const recource = this.createResources(
-        this.currentComponent.component.selector
+        this.currentComponent.component.selector,
       );
       this.entryPoint.append(recource);
       this.currentComponent.component.init();
@@ -77,8 +77,9 @@ class Router {
   }
   subscribeWindowChange() {
     window.onpopstate = ((event) => {
+      console.log('onpopstate');
       this.mountComponent(event.currentTarget.location.pathname);
-    }).bind(this);
+    });
   }
   initListeners(): void {
     this.pageLinks = document.querySelectorAll(`.${this.linkClass}`);
@@ -87,9 +88,7 @@ class Router {
       event.stopPropagation();
       this.mountComponent(event.currentTarget.pathname);
     };
-    this.pageLinks.forEach((link) =>
-      link.addEventListener('click', callback, false)
-    );
+    this.pageLinks.forEach((link) => link.addEventListener('click', callback, false));
   }
   back() {
     this.history.back();

@@ -26,8 +26,12 @@ module.exports = {
     },
   },
   devServer: {
-    port: 8000,
-    hot: true,
+    historyApiFallback: true,
+    static: {
+      directory: path.join(__dirname, './publicssss'),
+    },
+    port: 9000,
+    compress: true,
   },
   output: {
     filename: './js/[name].js',
@@ -37,7 +41,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'My App',
       filename: 'index.html',
-      template: './index.html',
+      template: path.resolve(__dirname, './public/index.html'),
     }),
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({

@@ -16,5 +16,4 @@ export default function set(
   }
   const lastKey = keys.reverse()[0];
   result[lastKey] = value;
-  return;
 }

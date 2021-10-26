@@ -9,7 +9,7 @@ store.state.baseUrl = 'https://ya-praktikum.tech';
 
 async function getUser() {
   return fetchHTTP
-    .get(store.state.baseUrl + '/api/v2/auth/user')
+    .get(`${store.state.baseUrl}/api/v2/auth/user`)
     .then((res) => {
       if (res.status === 200) {
         store.state.authenticated = true;

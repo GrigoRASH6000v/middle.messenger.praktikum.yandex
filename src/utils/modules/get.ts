@@ -1,7 +1,7 @@
 export default function get(
   object: any,
   path: string,
-  defaultValue: any
+  defaultValue: any,
 ): unknown {
   if (typeof path !== 'string') {
     return;

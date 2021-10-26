@@ -1,9 +1,9 @@
 import { Block } from '@/framework/core/block.ts';
-import { registrationPageTemplate } from './registration.template.js';
 import { Validation } from '@/framework/core/validation.ts';
 import router from '@/router/routes.ts';
 import { store } from '@/store/index.ts';
 import fetchHTTP from '@/framework/core/fetch.ts';
+import { registrationPageTemplate } from './registration.template.js';
 
 interface Properties {
   components?: Block[];
@@ -96,13 +96,13 @@ export const registrationPage = new RegistrationPage({
       const validation = new Validation().getValidStatus(form);
       if (validation) {
         fetchHTTP
-          .post(store.state.baseUrl + '/api/v2/auth/signup', {
+          .post(`${store.state.baseUrl}/api/v2/auth/signup`, {
             body: this.data,
           })
           .then((res) => {
             if (res.status === 200) {
               fetchHTTP
-                .get(store.state.baseUrl + '/api/v2/auth/user')
+                .get(`${store.state.baseUrl}/api/v2/auth/user`)
                 .then((res) => {
                   if (res.status === 200) {
                     store.state.authenticated = true;
