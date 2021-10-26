@@ -1,5 +1,5 @@
-import { Block } from '../../framework/core/block.ts';
-import { notFoundPageTemplate } from './not-found-page.template';
+import { Block } from '@/framework/core/block.ts';
+import { notFoundPageTemplate } from './not-found-page.template.js';
 
 interface Properties {
   components?: Block[];

@@ -1,9 +1,9 @@
-import { Block } from '../../framework/core/block.ts';
-import { personalAccountPageTemplate } from './personal-account.template';
-import { Validation } from '../../framework/core/validation.ts';
-import { store } from '../../store/index';
-import router from '../../router/routes';
-import fetchHTTP from '../../framework/core/fetch';
+import { Block } from '@/framework/core/block.ts';
+import { personalAccountPageTemplate } from './personal-account.template.js';
+import { Validation } from '@/framework/core/validation.ts';
+import { store } from '@/store/index.ts';
+import router from '@/router/routes.ts';
+import fetchHTTP from '@/framework/core/fetch.ts';
 
 interface Properties {
   components?: Block[];
@@ -82,6 +82,8 @@ export const personalAccount = new PersonalAccount({
       second_name: '',
       display_name: '',
       phone: '',
+      passwordOld: '',
+      passwordNew: ''
     },
   },
   methods: {
@@ -95,6 +97,28 @@ export const personalAccount = new PersonalAccount({
           }
         });
     },
+    showField() {
+      const repeatPasswordBlock = document.getElementById('repeat-password-block')
+      const inputPasswordOld = document.getElementById('input-password-old');
+      const inputPasswordNew = document.getElementById('input-password-new');
+      const btnPasswordChange = document.getElementById('btn-password-change')
+      const btnPasswordSave = document.getElementById('btn-password-save')
+      
+      inputPasswordOld?.classList.toggle('input-block__input--hide')
+      btnPasswordChange?.classList.toggle('input-block__label--hidden')
+      btnPasswordSave?.classList.toggle('input-block__label--hidden')
+      repeatPasswordBlock?.classList.toggle('inputs__input-block--hide')
+      inputPasswordOld.removeAttribute('disabled');
+      inputPasswordOld?.focus();
+    },
+    changePassword(){
+      fetchHTTP.put(store.state.baseUrl + '/api/v2/user/password', {body: {oldPassword: this.data.form.passwordOld, newPassword: this.data.form.passwordNew}})
+      .then(res=> {
+        if(res.status === 200){
+          this.methods.showField()
+        }
+      })
+    }
     setValues() {
       this.data.form.first_name = store.state.userData.first_name;
       this.data.form.second_name = store.state.userData.second_name;

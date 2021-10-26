@@ -1,7 +1,7 @@
 export default function set(
-  object: { [key: string]: () => unknown },
+  object: { [key: string]: unknown },
   path: string,
-  value: unknown
+  value: unknown,
 ): unknown {
   if (typeof path !== 'string') {
     return;
@@ -16,5 +16,4 @@ export default function set(
   }
   const lastKey = keys.reverse()[0];
   result[lastKey] = value;
-  return;
 }

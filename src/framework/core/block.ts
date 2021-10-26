@@ -1,6 +1,5 @@
-import { EventBus } from './ebent-bus';
-import isEmpty from '../../utils/modules/isEmpty';
-import { utils } from '../../utils/index';
+import { utils } from '@/utils/index.ts';
+import { EventBus } from './ebent-bus.ts';
 
 const templator = require('vue-template-compiler');
 
@@ -75,13 +74,13 @@ export abstract class Block {
     }
   }
   _binding() {
-    for (let key in this.methods) {
+    for (const key in this.methods) {
       this.methods[key] = this.methods[key].bind(this);
     }
   }
   _makeDeepProxy(obj) {
     obj = this._makePropsProxy(obj);
-    for (let key in obj) {
+    for (const key in obj) {
       if (utils.isObject(obj[key])) {
         obj[key] = this._makeDeepProxy(obj[key]);
       }
@@ -151,13 +150,13 @@ export abstract class Block {
     const nodeElement = document.createElement(object.tag);
     let vFor = false;
     let fragment = null;
-    if (!isEmpty(object.attrsMap)) {
+    if (!utils.isEmpty(object.attrsMap)) {
       const attrs = object.attrsMap;
       for (const key in attrs) {
         if (key === '@click') {
           nodeElement.addEventListener(
             'click',
-            this.methods[attrs[key]].bind(this)
+            this.methods[attrs[key]].bind(this),
           );
         } else if (key === 'v-model') {
           if (nodeElement.tagName === 'INPUT') {
@@ -167,9 +166,9 @@ export abstract class Block {
             });
           }
         } else if (key === 'v-for') {
-          let item = attrs[key].split('of')[0].trim();
-          let list = attrs[key].split('of')[1].trim();
-          let dataList = this.data[list];
+          const item = attrs[key].split('of')[0].trim();
+          const list = attrs[key].split('of')[1].trim();
+          const dataList = this.data[list];
           vFor = dataList;
         } else {
           this._setAttrs(nodeElement, key, attrs[key]);
@@ -183,9 +182,7 @@ export abstract class Block {
           : null;
         if (child.type === Block.BIND_TYPES.IS_METHOD) {
           nodeElement.textContent = child.tokens
-            .map((t: unknown) => {
-              return utils.get(data, t['@binding'], '');
-            })
+            .map((t: unknown) => utils.get(data, t['@binding'], ''))
             .join(' ');
         }
       });
@@ -196,7 +193,7 @@ export abstract class Block {
         nodeElement.textContent = object.text;
       }
       object.children.forEach((el) => {
-        let child = this._createDocumentElement(el);
+        const child = this._createDocumentElement(el);
         if (child) {
           nodeElement.appendChild(child);
         }
@@ -205,7 +202,7 @@ export abstract class Block {
     if (vFor) {
       fragment = document.createDocumentFragment();
       vFor.forEach((element) => {
-        let cloneNode = nodeElement.cloneNode(true);
+        const cloneNode = nodeElement.cloneNode(true);
         fragment.appendChild(cloneNode);
       });
       return fragment;
@@ -213,7 +210,7 @@ export abstract class Block {
 
     return nodeElement;
   }
-  _setAttrs(element: HTMLElement, key: unknown, value: unknown): void {
+  _setAttrs(element: HTMLElement, key: string, value: unknown): void {
     if (element.nodeName === '#document-fragment') {
       for (let i = 0; i < element.children.length; i++) {
         element.children[i].setAttribute(key, value);
@@ -221,7 +218,6 @@ export abstract class Block {
       return;
     }
     element.setAttribute(key, value);
-    return;
   }
 
   getNode(): HTMLElement {

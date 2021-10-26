@@ -1,7 +1,7 @@
-import { Block } from '../../framework/core/block.ts';
-import { homeTemplate } from './home.template';
-import { chatField } from './chatField/chat-field.component';
-import { chatList } from './chatList/chat-list.component';
+import { Block } from '@/framework/core/block.ts';
+import { homeTemplate } from './home.template.js';
+import { chatField } from './chatField/chat-field.component.ts';
+import { chatList } from './chatList/chat-list.component.ts';
 
 interface Properties {
   components?: Block[];

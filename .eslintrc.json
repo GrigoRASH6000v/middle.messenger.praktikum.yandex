@@ -4,6 +4,9 @@
     "es6": true,
     "node": true
   },
+  "settings": {
+    "import/resolver": "webpack"
+  },
   "extends": [
     "airbnb",
     "airbnb/hooks",
@@ -16,6 +19,7 @@
   },
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
+    "import/no-unresolved": [2, { "caseSensitive": false }],
     "import/extensions": [
       0,
       "ignorePackages",
@@ -48,6 +52,7 @@
     "no-nested-ternary": "off",
     "@typescript-eslint/no-empty-function": ["error"],
     "no-restricted-syntax": "off",
-    "guard-for-in": "off"
+    "guard-for-in": "off",
+    "no-var-requires": "off"
   }
 }

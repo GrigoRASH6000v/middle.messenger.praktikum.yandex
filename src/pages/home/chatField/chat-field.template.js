@@ -1,6 +1,5 @@
-import avatar1 from '../../../assets/img/users__avatars/avatar.png';
 import yndxBigAvatar from '../../../assets/img/group_avatars/yndx-big-avatar.png';
-import avatar3 from '../../../assets/img/users__avatars/avatar-3.png';
+
 export const chatFieldTemplate = `<div class="chat-field" id="chat-field">
     <div class="chat-field__header">
         <div class="header__chat-info">

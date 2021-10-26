@@ -37,7 +37,12 @@ export const personalAccountPageTemplate = `<div class="personal-account" id="pe
                 <button class="input-block__label" @click="submitForm">Изменить данные</button>
             </div>
             <div class="inputs__input-block">
-                <button class="input-block__label">Изменить пароль</button>
+                <button @click="showField" id="btn-password-change"  class="input-block__label">Изменить пароль</button>
+                <button @click="changePassword" id="btn-password-save" class="input-block__label input-block__label--hidden">Сохранить изменения </button>
+                <input  id="input-password-old" class="input-block__input input-block__input--hide" v-model="form.passwordOld" placeholder="Введите старый пароль" disabled type="password">
+            </div>
+            <div class="inputs__input-block inputs__input-block--grid inputs__input-block--hide" id="repeat-password-block">
+                <input  id="input-password-new" class="input-block__input" v-model="form.passwordNew" placeholder="Введите новый пароль"  type="password">
             </div>
             <div class="inputs__input-block">
                 <button @click="logout" class="link-btn--text">Выйти</button>

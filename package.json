@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "parcel serve ./public/index.html --port 3000",
-    "build": "parcel build ./public/index.html",
-    "serve": "node server/index.js",
-    "eslint": "eslint ./src --fix"
+    "build": "webpack build",
+    "dev": "webpack serve --mode development --open",
+    "eslint": "eslint ./src --fix",
+    "serve": "node ./server/index.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,9 @@
     "@types/node": "^16.4.12",
     "@typescript-eslint/eslint-plugin": "^4.28.3",
     "@typescript-eslint/parser": "^4.28.3",
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^9.0.1",
+    "css-loader": "^6.4.0",
     "eslint": "^7.31.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-node": "^4.1.0",
@@ -36,17 +39,25 @@
     "eslint-plugin-react-hooks": "^1.7.0",
     "eslint-plugin-unicorn": "^34.0.1",
     "express": "^4.17.1",
-    "parcel-bundler": "^1.12.5",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.4.0",
+    "mini-css-extract-plugin": "^2.4.2",
     "prettier": "^2.3.2",
+    "sass": "^1.43.2",
+    "sass-loader": "^12.2.0",
     "sharp": "^0.28.3",
     "stylelint": "^13.13.1",
-    "typescript": "^4.3.5",
-    "sass": "^1.35.1"
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.4.4",
+    "webpack": "^5.58.2",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.3.1",
+    "webpack-merge": "^5.8.0"
   },
   "dependencies": {
     "b_": "^1.3.4",
+    "eslint-import-resolver-webpack": "^0.13.2",
     "normalize.css": "^8.0.1",
-    
     "vue-template-compiler": "^2.6.14"
   },
   "engine": "14.15.0"

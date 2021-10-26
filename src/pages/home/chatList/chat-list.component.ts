@@ -1,9 +1,9 @@
-import { Block } from '../../../framework/core/block.ts';
-import { chatListTemplate } from './chat-list.template';
-import { store } from '../../../store/index';
-import { eventBus } from '../../../bus/index';
-import fetchHTTP from '../../../framework/core/fetch';
-import avatar2 from '../../../assets/img/users__avatars/avatar-2.png';
+import { Block } from '@/framework/core/block.ts';
+import { store } from '@/store/index.ts';
+import { eventBus } from '@/bus/index.ts';
+import fetchHTTP from '@/framework/core/fetch.ts';
+import avatar2 from '@/assets/img/users__avatars/avatar-2.png';
+import { chatListTemplate } from './chat-list.template.js';
 
 class ChatList extends Block {
   constructor(properties) {
@@ -24,7 +24,7 @@ export const chatList = new ChatList({
   },
   methods: {
     selectChat(target) {
-      let chats = document.querySelectorAll('.chats__item');
+      const chats = document.querySelectorAll('.chats__item');
       let selectedChatData;
       chats.forEach((chat) => {
         if (chat.dataset.id !== target.dataset.id) {
@@ -38,20 +38,20 @@ export const chatList = new ChatList({
       } else {
         this.data.selectedChat = target.dataset.id;
         selectedChatData = this.data.listOfChats.find(
-          (el) => el.id === +this.data.selectedChat
+          (el) => el.id === +this.data.selectedChat,
         );
       }
       eventBus.emit('selectChat', selectedChatData);
     },
     getChat() {
-      fetchHTTP.get(store.state.baseUrl + '/api/v2/chats').then((res) => {
+      fetchHTTP.get(`${store.state.baseUrl}/api/v2/chats`).then((res) => {
         this.data.listOfChats = res.data;
         this.methods.renderChatList(res.data);
       });
     },
     removeChat(id) {
       fetchHTTP
-        .delete(store.state.baseUrl + '/api/v2/chats', {
+        .delete(`${store.state.baseUrl}/api/v2/chats`, {
           body: { chatId: id },
         })
         .then((res) => {
@@ -65,7 +65,7 @@ export const chatList = new ChatList({
         this.showInput = true;
       } else if (this.showInput && this.data.title) {
         fetchHTTP
-          .post(store.state.baseUrl + '/api/v2/chats', {
+          .post(`${store.state.baseUrl}/api/v2/chats`, {
             body: { title: this.data.title },
           })
           .then((res) => {
@@ -100,7 +100,7 @@ export const chatList = new ChatList({
       }
     },
     renderChatList(data) {
-      let target = document.getElementById('chat-list');
+      const target = document.getElementById('chat-list');
       let str = '';
       data.forEach((d) => {
         str += `<div class="chats__item" data-id="${d.id}">
@@ -117,8 +117,8 @@ export const chatList = new ChatList({
       this.methods.initListener();
     },
     initListener() {
-      let chats = document.querySelectorAll('.chats__item');
-      let buttons = document.querySelectorAll('.chats__item-btn-remove');
+      const chats = document.querySelectorAll('.chats__item');
+      const buttons = document.querySelectorAll('.chats__item-btn-remove');
       buttons.forEach((el, idx) => {
         chats[idx].addEventListener('click', (e) => {
           this.methods.selectChat(e.currentTarget);

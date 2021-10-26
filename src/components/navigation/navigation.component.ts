@@ -1,8 +1,8 @@
+import { Block } from '@/framework/core/block.ts';
+import { store } from '@/store/index.ts';
+import router from '@/router/routes.ts';
+import fetchHTTP from '@/framework/core/fetch.ts';
 import { navigationTemplate } from './navigation.template.js';
-import { Block } from '../../framework/core/block';
-import { store } from '../../store/index';
-import router from '../../router/routes';
-import fetchHTTP from '../../framework/core/fetch';
 
 class Navigation extends Block {
   constructor(properties) {
@@ -16,7 +16,7 @@ export const navigation = new Navigation({
   methods: {
     logout() {
       fetchHTTP
-        .post(store.state.baseUrl + '/api/v2/auth/logout')
+        .post(`${store.state.baseUrl}/api/v2/auth/logout`)
         .then((res) => {
           if (res.status === 200) {
             store.state.authenticated = false;

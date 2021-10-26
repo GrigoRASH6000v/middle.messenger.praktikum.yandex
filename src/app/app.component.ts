@@ -1,6 +1,6 @@
-import { Block } from '../framework/core/block.ts';
-import { appTemplate } from './app.template';
-import { navigation } from '../components/navigation/navigation.component';
+import { Block } from '@/framework/core/block.ts';
+import { navigation } from '@/components/navigation/navigation.component.ts';
+import { appTemplate } from './app.template.js';
 
 export class App extends Block {
   constructor(props: unknown) {

@@ -1,9 +1,9 @@
-import { Block } from '../../framework/core/block.ts';
-import { loginTemplate } from './login.template';
+import { Block } from '@/framework/core/block.ts';
+import { store } from '@/store/index.ts';
+import router from '@/router/routes.ts';
+import fetchHTTP from '@/framework/core/fetch.ts';
 import { Validation } from '../../framework/core/validation.ts';
-import { store } from '../../store/index';
-import router from '../../router/routes';
-import fetchHTTP from '../../framework/core/fetch';
+import { loginTemplate } from './login.template.js';
 
 interface Properties {
   components?: Block[];
@@ -51,13 +51,13 @@ export const loginPage = new LoginPage({
         password: this.data.password,
       };
       fetchHTTP
-        .post(store.state.baseUrl + '/api/v2/auth/signin', {
+        .post(`${store.state.baseUrl}/api/v2/auth/signin`, {
           body: form,
         })
         .then((res) => {
           if (res.data === 'OK') {
             fetchHTTP
-              .get(store.state.baseUrl + '/api/v2/auth/user')
+              .get(`${store.state.baseUrl}/api/v2/auth/user`)
               .then((res) => {
                 if (res.status === 200) {
                   store.state.authenticated = true;
